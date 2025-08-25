@@ -18,13 +18,11 @@ import {
 } from "@/store/admin/products-slice";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import SizeManager from "@/components/admin-view/SizeManager";
 
 const initialFormData = {
   title: "",
   description: "",
   category: "",
-  brand: "",
   price: "",
   salePrice: "",
   totalStock: "",
@@ -88,7 +86,6 @@ function isFormValid() {
     "title",
     "description",
     "category",
-    "brand",
     "price",
     "salePrice",
     "totalStock",
@@ -105,21 +102,7 @@ function isFormValid() {
     return false;
   }
 
-  // Check sizes array
-  if (!formData.sizes || formData.sizes.length === 0) {
-    return false;
-  }
-
-  // Each size must have label, value, and stock
-  for (let size of formData.sizes) {
-    if (
-      !size.value ||
-      size.stock === "" ||
-      isNaN(size.stock)
-    ) {
-      return false;
-    }
-  }
+  
 
   return true;
 }
@@ -178,10 +161,7 @@ function isFormValid() {
           />
 
          <div className="py-6 space-y-6">
-            <SizeManager
-              sizes={formData.sizes}
-              setSizes={(sizes) => setFormData((prev) => ({ ...prev, sizes }))}
-            />
+            
             <CommonForm
               onSubmit={onSubmit}
               formData={formData}

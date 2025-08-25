@@ -55,8 +55,8 @@ module.exports = {
                 ht_primary_hover: '#f07f2c',
                 ht_secondary: '#11224D',
                 ht_secondary_hover: '#1a3473',
-                ds_orange: '#EE751A',
-                ds_orange_hover: '#f07f2c',
+                ds_orange: '#f3db44',
+                ds_orange_hover: '#f4e373',
                 ds_gray: '#3F4955',
                 ds_gray_hover: '#363e47',
 

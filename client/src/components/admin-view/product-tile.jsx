@@ -15,7 +15,7 @@ function AdminProductTile({
           <img
            src={product?.images?.[0] ? product.images[0] : "/placeholder.png"}
             alt={product?.title}
-            className="w-full h-[300px] object-cover rounded-t-lg"
+            className="w-full h-[200px] object-cover rounded-t-lg"
           />
         </div>
         <CardContent>

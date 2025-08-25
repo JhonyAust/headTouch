@@ -80,7 +80,6 @@ function ProductDetails() {
 
   function handleAddtoCart(productId) {
     if (!productId) return toast({ title: "Invalid product ID", variant: "destructive" });
-    if (!selectedSize) return toast({ title: "Please select a size", variant: "destructive" });
 
     const payload = { productId, size: selectedSize, quantity };
     if (user) {
@@ -104,7 +103,6 @@ function ProductDetails() {
 
   function handleBuyNow(productId) {
   if (!productId) return toast({ title: "Invalid product ID", variant: "destructive" });
-  if (!selectedSize) return toast({ title: "Please select a size", variant: "destructive" });
 
   const payload = { productId, size: selectedSize, quantity };
 
@@ -213,24 +211,23 @@ const handleToggleWishlist = async () => {
           <h1 className="text-3xl font-bold mb-4">{productDetails.title}</h1>
 
           <div className="flex gap-4 mb-4">
-            <span className="text-muted-foreground">
-              Category: {categoryOptionsMap[productDetails.category]}
+            <span className="text-muted-foreground text-[#565959]">
+              Category :  {categoryOptionsMap[productDetails.category]}
             </span>
-            <span className="text-muted-foreground">
-              Brand: {brandOptionsMap[productDetails.brand]}
+            <span >
             </span>
           </div>
 
           <div className="flex items-center gap-20 mb-4">
             <span
-              className={`text-2xl font-semibold text-[#8F8933] ${
+              className={`text-xl text-[#565959] ${
                 productDetails.salePrice > 0 ? "line-through" : ""
               }`}
             >
               ৳ {productDetails.price}
             </span>
             {productDetails.salePrice > 0 && (
-              <span className="text-2xl font-bold text-[#8F8933]">
+              <span className="text-2xl font-bold text-black">
                 ৳ {productDetails.salePrice}
               </span>
             )}
@@ -245,26 +242,13 @@ const handleToggleWishlist = async () => {
           </div>
 
           {productDetails.totalStock > 0 && (
-            <div className="mb-6">
-              <div className="mb-4">
-                <Label>Select Size</Label>
-                <select
-                  value={selectedSize}
-                  onChange={(e) => setSelectedSize(e.target.value)}
-                  className="w-full border rounded px-3 py-2 mt-2"
-                >
-                  <option value="">Choose an option</option>
-                  {productDetails?.sizes?.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.value} ({s.stock} in stock)
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="mb-4">
 
-              <div className="mb-4 flex items-center justify-between">
+
+              <div className="mb-4 flex flex-col">
+               <div className="flex items-center pb-6 gap-4"> 
                 <Label>Quantity</Label>
-                <div className="flex items-center gap-2">
+                <div className="flex  items-center gap-4">
                   <Button variant="outline" size="icon" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>
                     -
                   </Button>
@@ -273,9 +257,10 @@ const handleToggleWishlist = async () => {
                     +
                   </Button>
                 </div>
+                </div>
                 <div className="flex flex-col sm:flex-row gap-3 ">
                     <Button
-                      className="flex-1 bg-ds_orange hover:bg-ds_orange_hover"
+                      className="flex-1 text-black bg-ds_orange hover:bg-ds_orange_hover"
                       onClick={() => handleAddtoCart(productDetails._id)}
                     >
                       Add to Cart

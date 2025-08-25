@@ -47,7 +47,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
           <div className="mt-8 space-y-4">
             <div className="flex justify-between">
               <span className="font-bold">Subtotal :</span>
-              <span className="font-bold text-ds_orange hover:text-ds_orange_hover">৳ {totalCartAmount}</span>
+              <span className="font-bold text-black">৳ {totalCartAmount}</span>
             </div>
           </div>
 
@@ -56,7 +56,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
               navigate("/shop/checkout");
               setOpenCartSheet(false);
             }}
-            className="w-full mt-6 bg-ds_orange hover:bg-ds_orange_hover"
+            className="w-full mt-6 text-black bg-ds_orange hover:bg-ds_orange_hover"
           >
             CHECKOUT
           </Button>
@@ -72,7 +72,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
               navigate("/shop/listing");
               setOpenCartSheet(false);
             }}
-            className="bg-ds_orange text-white hover:bg-ds_orange_hover"
+            className="bg-ds_orange text-black hover:bg-ds_orange_hover"
           >
             Return To Shop
           </Button>

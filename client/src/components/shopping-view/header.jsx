@@ -42,10 +42,10 @@ function Header() {
 
   return (
     <header className="fixed top-0  z-40 w-full bg-ht_secondary">
-      <div className="flex h-16 sm:h-20 items-center justify-between px-4 md:px-6">
+      <div className="flex h-14 sm:h-[70px] items-center justify-between px-4 md:px-6">
         {/* Left: Logo */}
         <Link to="/shop/home" className="flex items-center gap-2 mb-4">
-          <img src={img} className="h-10 w-32 sm:h-12 sm:w-48  mt-4" />
+          <img src={img} className="h-10 w-32 sm:h-14 sm:w-48  mt-4" />
         </Link>
 
         {/* Middle: Search Bar */}

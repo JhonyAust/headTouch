@@ -50,7 +50,7 @@ function Subheader() {
   }
 
   return (
-    <div className="bg-gray-100 shadow flex items-center justify-between px-4 py-2 mt-16 sm:mt-20">
+    <div className="bg-gray-100 shadow flex items-center justify-between px-4 py-2 mt-14 sm:mt-16">
       {/* Left: Menu Sheet */}
       <Sheet open={openMenuSheet} onOpenChange={setOpenMenuSheet}>
         <Button

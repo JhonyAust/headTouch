@@ -270,7 +270,7 @@ function Checkout() {
                         checked={shippingType === "inside"}
                         onChange={() => setShippingType("inside")}
                       />
-                      Inside Dhaka <span className="text-ds_orange">(৳ 80)</span>
+                      Inside Dhaka <span className="text-ht_primary">(৳ 80)</span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -280,7 +280,7 @@ function Checkout() {
                         checked={shippingType === "outside"}
                         onChange={() => setShippingType("outside")}
                       />
-                      Outside Dhaka <span className="text-ds_orange">(৳ 150)</span>
+                      Outside Dhaka <span className="text-ht_primary">(৳ 150)</span>
                     </label>
                      </div>
                   </div>
@@ -288,19 +288,19 @@ function Checkout() {
                   {/* Subtotal */}
                   <div className="flex justify-between font-semibold text-md border-t pt-4">
                     <span>Subtotal</span>
-                    <span className="text-ds_orange">৳ {totalCartAmount}</span>
+                    <span className="text-ht_primary">৳ {totalCartAmount}</span>
                   </div>
 
                   {/* Shipping */}
                   <div className="flex justify-between font-semibold text-md">
                     <span>Shipping</span>
-                    <span className="text-ds_orange">৳ {shippingCharge}</span>
+                    <span className="text-ht_primary">৳ {shippingCharge}</span>
                   </div>
 
                   {/* Total */}
                   <div className="flex justify-between font-bold text-lg border-t pt-4">
                     <span>Total</span>
-                    <span className="text-ds_orange">৳ {totalAmount}</span>
+                    <span className="text-ht_primary">৳ {totalAmount}</span>
                   </div>
 
                 </div>
@@ -322,7 +322,7 @@ function Checkout() {
 
                 <Button
                   onClick={handlePlaceOrder}
-                  className="w-full mt-4 bg-ds_orange hover:bg-ds_orange_hover"
+                  className="w-full mt-4 text-black bg-ds_orange hover:bg-ds_orange_hover"
                   disabled={isPlacingOrder}
                 >
                   {isPlacingOrder ? "Placing Order..." : "PLACE ORDER"}

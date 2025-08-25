@@ -62,19 +62,9 @@ export const addProductFormElements = [{
             { id: "premium", label: "Premium Collections" },
             { id: "vintage", label: "Vintage" },
         ],
-    }, {
-        label: "Brand",
-        name: "brand",
-        componentType: "select",
-        options: [
-            { id: "nike", label: "Nike" },
-            { id: "adidas", label: "Adidas" },
-            { id: "puma", label: "Puma" },
-            { id: "levi", label: "Levi's" },
-            { id: "zara", label: "Zara" },
-            { id: "h&m", label: "H&M" },
-        ],
-    }, {
+    },
+
+    {
         label: "Price",
         name: "price",
         componentType: "input",

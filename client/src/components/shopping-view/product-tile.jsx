@@ -11,15 +11,8 @@ import { toggleLocalWishlistItem } from "@/store/shop/wishlist-slice-local";
 import { toggleWishlistItem } from "@/store/shop/wishlist-slice";
 import HeartToggle from "./HeartToggle"; 
 
-const sizes = [
-  { label: "S (34-36)", value: "S" },
-  { label: "M (38-40)", value: "M" },
-  { label: "L (40-42)", value: "L" },
-];
 
 function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart }) {
-  const [showOptions, setShowOptions] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const { toast } = useToast();
   const dispatch = useDispatch();
@@ -32,10 +25,6 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
   ? Array.isArray(wishlistItems) && wishlistItems.some((item) =>item && item._id === product._id)
   : Array.isArray(localWishlistItems) && localWishlistItems.includes(product._id);
   console.log("Iswishlist",isWishlisted);
-
-
-
-  const toggleOptions = () => setShowOptions((prev) => !prev);
 
   const handleToggleWishlist = async (e) => {
   e.stopPropagation();
@@ -80,15 +69,7 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
 
 
   const addToCartHandler = () => {
-    if (!selectedSize) {
-      toast({
-        title: "Please select a size before adding to cart",
-        variant: "destructive",
-      });
-      return;
-    }
-    handleAddtoCart(product?._id, quantity, selectedSize);
-    setShowOptions(false);
+    handleAddtoCart(product?._id, quantity, 1);
   };
 
   return (
@@ -117,109 +98,49 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
             </Badge>
           ) : null}
         </div>
-        <CardContent className="p-2 sm:p-4">
-          <h2 className="text-md truncate" style={{ maxWidth: "100%" }}>
+        <CardContent className="p-6 sm:p-4 ">
+          <h2 className="text-xl font-semibold truncate" style={{ maxWidth: "100%" }}>
             {product?.title}
           </h2>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-[15px] text-muted-foreground">
-              {categoryOptionsMap[product?.category]}
-            </span>
-            <span className="text-[15px] text-muted-foreground">
-              {brandOptionsMap[product?.brand]}
-            </span>
-          </div>
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mt-6">
+             <div className="flex-col mb-2">
+
+             <div>
+            {product?.salePrice > 0 && (
+              <span className="text-lg font-semibold text-black">
+                ৳ {product?.salePrice}
+              </span>
+            )}
+            </div>
+            <div>
             <span
-              className={`text-md font-semibold text-[#8F8933] ${
+              className={`text-xs font-semibold text-[#565959] ${
                 product?.salePrice > 0 ? "line-through" : ""
               }`}
             >
               ৳ {product?.price}
             </span>
-            {product?.salePrice > 0 && (
-              <span className="text-md font-semibold text-[#8F8933]">
-                ৳ {product?.salePrice}
-              </span>
-            )}
+            </div>
+           
           </div>
-        </CardContent>
-      </div>
-
-      <CardFooter>
+          <CardFooter>
         {product?.totalStock === 0 ? (
           <Button className="w-full opacity-60 cursor-not-allowed">Out Of Stock</Button>
         ) : (
-          <Button onClick={toggleOptions} className="w-full bg-ds_orange hover:bg-ds_orange_hover">
+          <Button onClick={addToCartHandler}  className="w-full p-2 text-xs bg-ds_orange hover:bg-ds_orange_hover text-black">
             ADD TO CART
           </Button>
         )}
       </CardFooter>
 
-      <AnimatePresence>
-        {showOptions && (
-          <motion.div
-            initial={{ opacity: 0, y: "100%" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "100%" }}
-            transition={{ duration: 0.4 }}
-            className="absolute inset-0 bg-white bg-opacity-35 backdrop-blur-md z-20 p-1 sm:p-4 rounded-lg flex flex-col justify-between"
-          >
-            <div className="flex justify-between items-start mb-6 mt-16">
-              <div className="flex-1 flex justify-center">
-                <select
-                  value={selectedSize}
-                  onChange={(e) => setSelectedSize(e.target.value)}
-                  className="w-5/6 border-2 border-[#918E8F] rounded px-3 py-2 text-center text-[#918E8F] font-medium text-base"
-                >
-                  <option value="">Choose an option</option>
-                  {sizes.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  setShowOptions(false);
-                  setQuantity(1);
-                }}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
 
-            <div className="flex items-center justify-between px-8 mb-8 gap-2">
-              <div className="flex items-center gap-2">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                >
-                  -
-                </Button>
-                <span className="font-semibold text-sm ">{quantity}</span>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => setQuantity(quantity + 1)}
-                >
-                  +
-                </Button>
-              </div>
-              <Button
-                className="bg-ds_orange hover:bg-ds_orange_hover px-2 py-2 text-sm sm:text-base"
-                onClick={addToCartHandler}
-              >
-                Add
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+         
+        </CardContent>
+      </div>
+
+      
+      
     </Card>
   );
 }

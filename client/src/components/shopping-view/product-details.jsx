@@ -125,14 +125,14 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     </div>
     <div className="flex items-center justify-between">
       <p
-        className={`text-2xl font-semibold text-[#8F8933] ${
+        className={`text-2xl font-semibold text-[#565959] ${
           productDetails?.salePrice > 0 ? "line-through" : ""
         }`}
       >
         ৳ {productDetails?.price}
       </p>
       {productDetails?.salePrice > 0 ? (
-        <p className="text-2xl font-bold text-muted-foreground text-[#8F8933]">
+        <p className="text-2xl font-bold text-muted-foreground text-black">
           ৳ {productDetails?.salePrice}
         </p>
       ) : null}
