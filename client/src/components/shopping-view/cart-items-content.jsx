@@ -124,7 +124,7 @@ function UserCartItemsContent({ cartItem }) {
         </div>
 
         {/* Total Price */}
-        <p className="mt-2 font-semibold text-sm text-muted-foreground text-black">
+        <p className="mt-2 font-semibold text-sm text-muted-foreground text-ds_orange hover:text-ds_orange_hover">
           ৳{" "}
           {(
             (cartItem?.salePrice > 0 ? cartItem?.salePrice : cartItem?.price) *

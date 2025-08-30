@@ -14,7 +14,7 @@ export const addToCart = createAsyncThunk(
                 userId,
                 productId,
                 quantity,
-                size,
+
             }
         );
 
@@ -52,7 +52,7 @@ export const updateCartQuantity = createAsyncThunk(
                 userId,
                 productId,
                 quantity,
-                size,
+
             }
         );
 

@@ -50,6 +50,33 @@ function ShoppingHome() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const [newArrivals, setNewArrivals] = useState([]);
+
+useEffect(() => {
+  // Fetch Featured Products
+  dispatch(
+    fetchAllFilteredProducts({
+      filterParams: {},
+      sortParams: "price-lowtohigh",
+    })
+  );
+
+  // Fetch New Arrivals by category filter
+  dispatch(
+    fetchAllFilteredProducts({
+      filterParams: { category: ["new"] },  // 👈 filter for new arrivals
+      sortParams: "price-lowtohigh",
+    })
+  ).then((res) => {
+    if (res?.payload?.data) {
+      setNewArrivals(res.payload.data); // store locally
+    }
+  });
+
+  dispatch(getFeatureImages());
+}, [dispatch]);
+
+
   function handleNavigateToListingPage(getCurrentItem, section) {
     sessionStorage.removeItem("filters");
     const currentFilter = {
@@ -59,7 +86,7 @@ function ShoppingHome() {
     navigate(`/shop/listing`);
   }
 
-  function handleAddtoCart(getCurrentProductId,quantity, size) {
+  function handleAddtoCart(getCurrentProductId,quantity) {
     const product = productList.find((p) => p._id === getCurrentProductId);
 
     if (!user) {
@@ -72,7 +99,6 @@ function ShoppingHome() {
           salePrice: product.salePrice,
           image: product.images[0],
           quantity,
-          size,
         })
         
       );
@@ -85,12 +111,14 @@ function ShoppingHome() {
         userId: user?.id,
         productId: getCurrentProductId,
         quantity,
-        size,
+       
       })
     ).then((data) => {
       if (data?.payload?.success) {
         dispatch(fetchCartItems(user?.id));
         toast({ title: "Product added to cart" });
+      }else{
+        console.log("Fail",data);
       }
     });
   }
@@ -244,30 +272,31 @@ function ShoppingHome() {
         </motion.div>
       </section>
 
-      {/* Shop by Brand */}
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">
-            Shop by Brand
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {brandsWithIcon.map((brandItem) => (
-              <Card
-                key={brandItem.id}
-                onClick={() =>
-                  handleNavigateToListingPage(brandItem, "brand")
-                }
-                className="cursor-pointer hover:shadow-lg transition-shadow"
-              >
-                <CardContent className="flex flex-col items-center justify-center p-6">
-                  <brandItem.icon className="w-12 h-12 mb-4 text-primary" />
-                  <span className="font-bold">{brandItem.label}</span>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+     {/* 🚀 New Arrival Products */}
+<section className="py-12 bg-gray-50">
+  <motion.div
+    className="container mx-auto px-4"
+    initial={{ opacity: 0, y: 50 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.5 }}
+    transition={{ duration: 0.6 }}
+  >
+    <h2 className="text-4xl mb-12 px-12">New Arrival Products</h2>
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 px-4 md:px-12">
+      {newArrivals && newArrivals.length > 0
+        ? newArrivals.map((productItem) => (
+            <ShoppingProductTile
+              key={productItem._id}
+              handleGetProductDetails={handleNavigateToProductDetails}
+              product={productItem}
+              handleAddtoCart={handleAddtoCart}
+            />
+          ))
+        : <p className="col-span-full text-center text-gray-500">No new arrivals found</p>}
+    </div>
+  </motion.div>
+</section>
+
     </div>
   );
 }

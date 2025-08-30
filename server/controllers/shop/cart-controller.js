@@ -3,9 +3,9 @@ const Product = require("../../models/Product");
 
 const addToCart = async(req, res) => {
     try {
-        const { userId, productId, quantity, size } = req.body;
+        const { userId, productId, quantity } = req.body;
 
-        if (!userId || !productId || quantity <= 0 || !size) {
+        if (!userId || !productId || quantity <= 0) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid data provided!",
@@ -29,12 +29,11 @@ const addToCart = async(req, res) => {
 
         const findCurrentProductIndex = cart.items.findIndex(
             (item) =>
-            item.productId.toString() === productId &&
-            item.size === size
+            item.productId.toString() === productId
         );
 
         if (findCurrentProductIndex === -1) {
-            cart.items.push({ productId, quantity, size });
+            cart.items.push({ productId, quantity });
         } else {
             cart.items[findCurrentProductIndex].quantity += quantity;
         }
@@ -92,7 +91,6 @@ const fetchCartItems = async(req, res) => {
             price: item.productId.price,
             salePrice: item.productId.salePrice,
             quantity: item.quantity,
-            size: item.size, // include size in the response
         }));
 
         res.status(200).json({
@@ -113,9 +111,9 @@ const fetchCartItems = async(req, res) => {
 
 const updateCartItemQty = async(req, res) => {
     try {
-        const { userId, productId, quantity, size } = req.body;
+        const { userId, productId, quantity } = req.body;
 
-        if (!userId || !productId || quantity <= 0 || !size) {
+        if (!userId || !productId || quantity <= 0) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid data provided!",
@@ -132,8 +130,7 @@ const updateCartItemQty = async(req, res) => {
 
         const findCurrentProductIndex = cart.items.findIndex(
             (item) =>
-            item.productId.toString() === productId &&
-            item.size === size
+            item.productId.toString() === productId
         );
 
         if (findCurrentProductIndex === -1) {
@@ -158,7 +155,6 @@ const updateCartItemQty = async(req, res) => {
             price: item.productId ? item.productId.price : null,
             salePrice: item.productId ? item.productId.salePrice : null,
             quantity: item.quantity,
-            size: item.size,
         }));
 
         res.status(200).json({
@@ -179,9 +175,9 @@ const updateCartItemQty = async(req, res) => {
 
 const deleteCartItem = async(req, res) => {
     try {
-        const { userId, productId, size } = req.params;
+        const { userId, productId } = req.params;
 
-        if (!userId || !productId || !size) {
+        if (!userId || !productId) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid data provided!",
@@ -202,8 +198,7 @@ const deleteCartItem = async(req, res) => {
 
         cart.items = cart.items.filter(
             (item) =>
-            item.productId._id.toString() !== productId ||
-            item.size !== size
+            item.productId._id.toString() !== productId
         );
 
         await cart.save();
@@ -220,7 +215,7 @@ const deleteCartItem = async(req, res) => {
             price: item.productId ? item.productId.price : null,
             salePrice: item.productId ? item.productId.salePrice : null,
             quantity: item.quantity,
-            size: item.size,
+
         }));
 
         res.status(200).json({

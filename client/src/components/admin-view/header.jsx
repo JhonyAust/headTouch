@@ -20,19 +20,26 @@ function AdminHeader({ setOpen }) {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000");
+  socketRef.current = io("http://localhost:5000");
 
-    socketRef.current.on("newOrderPlaced", (order) => {
-      setNewOrders((prev) => {
-        const updated = [order, ...prev];
-        return updated.slice(0, 6); // Keep max 5
-      });
+  socketRef.current.on("connect", () => {
+    console.log("✅ Connected to socket server:", socketRef.current.id);
+  });
+
+  socketRef.current.on("newOrderPlaced", (order) => {
+    console.log("📢 New order received:", order);
+    setNewOrders((prev) => {
+      const updated = [order, ...prev];
+      return updated.slice(0, 6);
     });
+  });
+  console.log("New Orders is: ",newOrders);
 
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, []);
+  return () => {
+    socketRef.current.disconnect();
+  };
+}, []);
+
 
   function handleLogout() {
     dispatch(logoutUser());

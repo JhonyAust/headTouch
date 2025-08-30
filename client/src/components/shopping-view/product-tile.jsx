@@ -69,7 +69,7 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
 
 
   const addToCartHandler = () => {
-    handleAddtoCart(product?._id, quantity, 1);
+    handleAddtoCart(product?._id, 1);
   };
 
   return (
@@ -77,11 +77,12 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
       {/* Heart Toggle Button */}
       <HeartToggle isActive={isWishlisted} onClick={handleToggleWishlist} />
 
-      <div onClick={() => handleGetProductDetails(product)}>
+      <div >
         <div className="relative group">
           <img
             src={product?.images?.[0] ? product.images[0] : "/placeholder.png"}
             alt={product?.title}
+            onClick={() => handleGetProductDetails(product)}
             className="w-full h-[200px] object-cover rounded-t-lg transition-transform duration-300 group-hover:scale-110"
           />
           {product?.totalStock === 0 ? (

@@ -12,11 +12,26 @@ import { Label } from "../ui/label";
 import { openLoginPopup } from "../../store/loginRegister-slice";
 import { getLocalCart } from "../utils/localCartUtils";
 import WishlistIconWithCount from "./WishlistIconWithCount";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { UserCog, LogOut } from "lucide-react";
+import { FaUserCircle } from "react-icons/fa";
+import { logoutUser } from "@/store/auth-slice";
+
+
 function Subheader() {
   const [openMenuSheet, setOpenMenuSheet] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useSelector((state) => state.auth);
   const dbWishlistItems = useSelector((state) => state.wishlist.items);
@@ -62,19 +77,62 @@ function Subheader() {
         </Button>
         <SheetContent side="left">
           <div className="p-4 space-y-4">
-            <ul className="space-y-2">
+            {/* Categories */}
+            <ul className="space-y-6">
               <li className="font-bold">Shop by Category</li>
-              <li className="pl-2 cursor-pointer">Men</li>
-              <li className="pl-2 cursor-pointer">Women</li>
-              <li className="pl-2 cursor-pointer">Footwear</li>
-              <li className="pl-2 cursor-pointer">Kids</li>
-              <li className="font-bold mt-2">Products</li>
-              <li className="pl-2 cursor-pointer">Account / Sign In</li>
-              <li className="pl-2 cursor-pointer">Settings</li>
-              <li className="pl-2 cursor-pointer">Contact</li>
+              {shoppingViewHeaderMenuItems.slice(2).map((menuItem) => (
+                <li
+                  key={menuItem.id}
+                  className="pl-2 cursor-pointer hover:text-orange-600"
+                  onClick={() => handleNavigate(menuItem)}
+                >
+                  {menuItem.label}
+                </li>
+              ))}
             </ul>
+
+            {/* Login/Profile */}
+          <div className="mt-8 border-t pt-4">
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="flex items-center gap-2 cursor-pointer">
+                    <Avatar className="bg-black">
+                      <AvatarFallback className="bg-black text-white font-extrabold">
+                        {user?.userName[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="font-semibold">{user?.userName}</span>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent  className="w-48">
+                  <DropdownMenuLabel>Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/shop/account")}>
+                    <UserCog className="mr-2 h-4 w-4" />
+                    My Account
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => dispatch(logoutUser())}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <button
+                onClick={() => dispatch(openLoginPopup())}
+                className="flex items-center gap-2 text-gray-700 hover:text-orange-600"
+              >
+                <FaUserCircle className="text-2xl" />
+                <span>Login</span>
+              </button>
+            )}
+          </div>
+
           </div>
         </SheetContent>
+
       </Sheet>
 
       {/* Middle: shoppingViewHeaderMenuItems */}
