@@ -29,14 +29,7 @@ const categoriesWithImages = [
   { id: "limited", label: "Limited Edition", image: limitedImage },
 ];
 
-const brandsWithIcon = [
-  { id: "nike", label: "Nike", icon: SiNike },
-  { id: "adidas", label: "Adidas", icon: SiAdidas },
-  { id: "puma", label: "Puma", icon: SiPuma },
-  { id: "levi", label: "Levi's", icon: SiNike },
-  { id: "zara", label: "Zara", icon: SiZara },
-  { id: "h&m", label: "H&M", icon: SiPuma },
-];
+
 
 function ShoppingHome() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -111,7 +104,9 @@ useEffect(() => {
         userId: user?.id,
         productId: getCurrentProductId,
         quantity,
-       
+        image: product.images[0],
+        
+        
       })
     ).then((data) => {
       if (data?.payload?.success) {
@@ -158,7 +153,7 @@ useEffect(() => {
   return (
     <div className="flex flex-col min-h-screen ">
       {/* Banner */}
-      <div className="relative w-full h-[300px] overflow-hidden ">
+      <div className="relative w-full h-[300px] md:h-[450px] overflow-hidden ">
         {featureImageList && featureImageList.length > 0
           ? featureImageList.map((slide, index) => (
               <img
@@ -196,14 +191,14 @@ useEffect(() => {
         >
           <ChevronRightIcon className="w-4 h-4" />
         </Button>
-        <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 text-center">
+        {/* <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 text-center">
           <button className="px-6 py-3 text-white hover:text-lg border border-white transition-all hover:border-[2px] hover:shadow-[0_0_10px_rgba(255,255,255,0.6)] hover:px-8">
             Shop Now
           </button>
           <p className="mt-4 text-white text-2xl font-bold tracking-wide">
             Stock Clearance Sale
           </p>
-        </div>
+        </div> */}
       </div>
 
       {/* Categories */}

@@ -14,6 +14,7 @@ function UserCartItemsContent({ cartItem }) {
   const { productList } = useSelector((state) => state.shopProducts);
   const dispatch = useDispatch();
   const { toast } = useToast();
+  console.log("Cart Items are: ",cartItem);
 
   function handleUpdateQuantity(getCartItem, typeOfAction) {
     if (user) {

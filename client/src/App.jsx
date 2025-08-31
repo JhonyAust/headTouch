@@ -34,6 +34,7 @@ import AdminOrderDetailsPage from "./pages/admin-view/orderdetails";
 import Wishlist from "./pages/shopping-view/WishList";
 import BottomNav from "./components/common/BottomNav";
 import AppInit from "./components/shopping-view/AppInit";
+import { fetchCartItems } from "./store/shop/cart-slice";
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
     (state) => state.auth
@@ -45,7 +46,11 @@ function App() {
   }, [dispatch]);
   const navigate = useNavigate();
   const location = useLocation();
-
+  useEffect(() => {
+    if (user?._id) {
+      dispatch(fetchCartItems(user._id));
+    }
+  }, [user, dispatch]);
   useEffect(() => {
     if (isAuthenticated) {
       if (user?.role === "admin" && !location.pathname.startsWith("/admin")) {

@@ -1,53 +1,117 @@
-import React from 'react';
-import { FaTwitter, FaFacebook, FaYoutube, FaLinkedin } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+// components/Footer.tsx
+import {
+  FaFacebookF,
+  FaLinkedinIn,
+  FaYoutube,
+  FaXTwitter,
+} from "react-icons/fa6";
 
-const MyFooter = () => {
+export default function Footer() {
+  const socialIcons = [
+    { icon: <FaFacebookF />, link: "https://facebook.com" },
+    { icon: <FaLinkedinIn />, link: "https://linkedin.com" },
+    { icon: <FaYoutube />, link: "https://youtube.com" },
+    { icon: <FaXTwitter />, link: "https://twitter.com" },
+  ];
+
+  const linkClass =
+    "text-gray-600 hover:text-red-700 hover:underline transition duration-300";
+
   return (
-    <footer className="bg-[#FFFFFF] dark:bg-transparent px-4">
-        <div className="flex flex-col items-center justify-center text-black dark:text-white text-center mb-10 -mt-20">
-                    <h1 className="text-4xl " style={{ letterSpacing: '2px', wordSpacing: '2px' }}>
-                    Subscribe to our newsletter
-                    </h1>
-                    <div className="max-w-xl mt-5 text-black dark:text-white ">
-                        <p className="whitespace-pre-wrap" style={{ letterSpacing: '1px', wordSpacing: '1px' }}>
-                        For monthly thoughts, insights, stories and news from the studio.
-                        </p>
-                    </div>
-                </div>
-      <div className="flex justify-center my-">
-        
-        <input type="email" placeholder="name@example.com" className="py-2 px-8 mr-2 text-[#3F4955]   placeholder-[#ffffff] ::placeholder bg-[#E26049] hover:bg-transparent hover:border-b-2 border-[#3F4955]" />
-        <button className="p-2 bg-[#3F4955] text-white border-none cursor-pointer">Subscribe</button>
-      </div>
-      <div className="flex flex-row justify-between gap-24 sm:gap-0 mb-12 text-black dark:text-white  px-24  mt-10 ">
-        <div className='space-y-4'><p className="">01841313444</p>
-        <p className="">info@doubleslash.com</p>
-        <p className="">Dhakkhingaon, Bashaboo, Dhaka.</p>
-        <div className="flex flex-row text-3xl gap-4">
-        <FaTwitter className="" /> {/* Twitter icon */}
-        <FaFacebook className="" /> {/* Facebook icon */}
-        <FaYoutube className="" /> {/* YouTube icon */}
-        <FaLinkedin className="" /> {/* LinkedIn icon */}
-        
-      </div>
-      </div>
-        <div className='space-y-4'><p className="">Privacy Policy</p>
-        
-      
-        <p className="">© 2025, DoubleSlash.
-
-        <br/>All Rights Reserved</p>
-        <p>
-          Created By <span className="text-primary text-xl"><Link to="https://www.linkedin.com/in/rayhan-jhony-baa53a1a9/">Rayhan Jhony</Link></span> 
-        </p>
+    <footer className="bg-[#F9F9F9] py-12 px-6 mb-16 md:mb-0 -mt-40">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-gray-800">
+        {/* Social Section */}
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Social</h3>
+          <div className="flex gap-4">
+            {socialIcons.map((s, i) => (
+              <a
+                key={i}
+                href={s.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-slate-700 hover:scale-110 transition-transform duration-300 text-xl"
+              >
+                {s.icon}
+              </a>
+            ))}
+          </div>
         </div>
-      
-        
-        
+
+        {/* Product Section */}
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Product</h3>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <a href="#" className={linkClass}>Grid & Layouts</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Typography</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Media Manager</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Form Builder</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Pop-up Builder</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Interaction & Animations</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Accessibility</a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Company Section */}
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Company</h3>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <a href="#" className={linkClass}>Affiliates</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Terms & Privacy</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Cookie</a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Resources Section */}
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Resources</h3>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <a href="#" className={linkClass}>Blog</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Documentation</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Release Notes</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Support</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Pricing</a>
+            </li>
+            <li>
+              <a href="#" className={linkClass}>Contact Us</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Footer Bottom */}
+      <div className="border-t border-gray-300 mt-12 pt-6 text-center text-sm text-gray-500">
+        © 2025 HeadTouch. All rights reserved.
       </div>
     </footer>
   );
-};
-
-export default MyFooter;
+}

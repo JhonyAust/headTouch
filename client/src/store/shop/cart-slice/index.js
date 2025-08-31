@@ -7,20 +7,19 @@ const initialState = {
 };
 
 export const addToCart = createAsyncThunk(
-    "cart/addToCart",
-    async({ userId, productId, quantity }) => {
-        const response = await axios.post(
-            "http://localhost:5000/api/shop/cart/add", {
-                userId,
-                productId,
-                quantity,
-
-            }
-        );
-
-        return response.data;
-    }
+  "cart/addToCart",
+  async ({ userId, productId, quantity, image }) => {
+    const response = await axios.post("http://localhost:5000/api/shop/cart/add", {
+      userId,
+      productId,
+      quantity,
+      image, 
+    });
+console.log("Image it is:",image);
+    return response.data;
+  }
 );
+
 
 export const fetchCartItems = createAsyncThunk(
     "cart/fetchCartItems",

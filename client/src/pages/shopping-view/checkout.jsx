@@ -172,9 +172,9 @@ function Checkout() {
   return (
     <div className="bg-[#F5F5F5] min-h-screen">
       {/* Banner Image */}
-      <div className="relative h-[300px] w-full overflow-hidden">
+      {/* <div className="relative h-[300px] w-full overflow-hidden">
         <img src={img} className="h-full w-full object-cover object-center" alt="Checkout banner" />
-      </div>
+      </div> */}
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto p-5 grid grid-cols-1 md:grid-cols-2 gap-5 mt-5 items-start">
