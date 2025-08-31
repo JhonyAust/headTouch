@@ -24,8 +24,8 @@ const wishlistRoutes = require("./routes/shop/wishlist-routes");
 const app = express();
 const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://headtouchbd.com",      // your frontend
+    "http://localhost:5173",
+    "https://headtouchbd.com", // your frontend
 ];
 // Create HTTP server to attach Socket.IO
 const server = http.createServer(app);
@@ -81,7 +81,7 @@ app.set("io", io);
 
 // Socket.IO connection
 io.on("connection", (socket) => {
-    console.log("🔌 A client connected:", socket.id);
+    console.log(" A client connected:", socket.id);
 
     socket.on("disconnect", () => {
         console.log("❌ Client disconnected:", socket.id);
