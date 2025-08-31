@@ -31,7 +31,7 @@ const allowedOrigins = [
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: allowedOrigins, // Frontend URL
+        origin: "*", // Frontend URL
         methods: ["GET", "POST"],
         credentials: true,
     },
