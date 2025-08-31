@@ -25,14 +25,15 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://headtouchbd.com", // your frontend
+    "https://headtouchbd.com",
+    "https://www.headtouchbd.com", 
 ];
 // Create HTTP server to attach Socket.IO
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*", // Frontend URL
-        methods: ["GET", "POST"],
+        origin: allowedOrigins, // Frontend URL
+        methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     },
 });
