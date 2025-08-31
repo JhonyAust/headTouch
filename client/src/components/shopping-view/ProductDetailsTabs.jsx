@@ -198,15 +198,13 @@ const ProductDetailsTabs = ({
 
         <TabsContent value="additional">
           <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-            <li><strong>Material:</strong> PU Leather + Rubber Sole</li>
-            <li><strong>Category:</strong> Casual Chinese Sneakers</li>
-            <li><strong>Fit:</strong> True to size</li>
-            <li><strong>Size Guide:</strong></li>
-            <li>L: 42–44 (EU)</li>
-            <li>M: 38–40 (EU)</li>
-            <li>S: 34–36 (EU)</li>
-            <li>XL: 46–48 (EU)</li>
-          </ul>
+          <li><strong>Style:</strong> Classic Bangladeshi streetwear</li>
+          <li><strong>Material:</strong> Durable cotton blend — perfect for all seasons</li>
+          <li><strong>Design:</strong> Embroidered flag & bold typography for deshi pride</li>
+          <li><strong>Fit:</strong> One size fits most — adjustable strap at the back</li>
+          <li><strong>Perfect For:</strong> Everyday wear, cricket matches, rallies, or just repping your roots</li>
+        </ul>
+
         </TabsContent>
 
         <TabsContent value="shipping">

@@ -1,7 +1,6 @@
 // store/common-slice.js
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-
+import axiosInstance from "@/components/api/axiosInstance";
 const initialState = {
     isLoading: false,
     featureImageList: [],
@@ -11,7 +10,7 @@ const initialState = {
 export const getFeatureImages = createAsyncThunk(
     "feature/getFeatureImages",
     async() => {
-        const response = await axios.get("http://localhost:5000/api/common/feature/get");
+        const response = await axiosInstance.get("/api/common/feature/get");
         return response.data;
     }
 );
@@ -20,7 +19,7 @@ export const getFeatureImages = createAsyncThunk(
 export const addFeatureImage = createAsyncThunk(
     "feature/addFeatureImage",
     async(image) => {
-        const response = await axios.post("http://localhost:5000/api/common/feature/add", { image });
+        const response = await axiosInstance.post("/api/common/feature/add", { image });
         return response.data;
     }
 );
@@ -29,7 +28,7 @@ export const addFeatureImage = createAsyncThunk(
 export const deleteFeatureImage = createAsyncThunk(
     "feature/deleteFeatureImage",
     async(id) => {
-        const response = await axios.delete(`http://localhost:5000/api/common/feature/delete/${id}`);
+        const response = await axiosInstance.delete(`/api/common/feature/delete/${id}`);
         return { success: true, id };
     }
 );

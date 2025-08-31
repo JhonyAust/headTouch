@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "@/components/api/axiosInstance";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -10,7 +10,7 @@ const initialState = {
 export const fetchWishlist = createAsyncThunk(
     "wishlist/fetchWishlist",
     async (userId) => {
-        const response = await axios.get(`http://localhost:5000/api/wishlist/${userId}`);
+        const response = await axiosInstance.get(`/api/wishlist/${userId}`);
         return response.data;
     }
 );
@@ -19,7 +19,7 @@ export const fetchWishlist = createAsyncThunk(
 export const toggleWishlistItem = createAsyncThunk(
     "wishlist/toggleWishlistItem",
     async ({ userId, productId }, thunkAPI) => {
-        const response = await axios.post("http://localhost:5000/api/wishlist/toggle", {
+        const response = await axiosInstance.post("/api/wishlist/toggle", {
             userId,
             productId,
         });

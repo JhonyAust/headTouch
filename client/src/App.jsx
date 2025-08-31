@@ -40,17 +40,25 @@ function App() {
     (state) => state.auth
   );
   const dispatch = useDispatch();
+  
   const route = useLocation();
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
   const navigate = useNavigate();
   const location = useLocation();
-  useEffect(() => {
-    if (user?._id) {
-      dispatch(fetchCartItems(user._id));
-    }
-  }, [user, dispatch]);
+useEffect(() => {
+  const userId = user?._id || user?.id;
+
+  if (userId) {
+    console.log("📦 Dispatching fetchCartItems with userId:", userId);
+    dispatch(fetchCartItems(userId));
+  } else {
+    console.log("⚠️ No user ID yet. Skipping fetchCartItems.");
+  }
+}, [user, dispatch]);
+
+
   useEffect(() => {
     if (isAuthenticated) {
       if (user?.role === "admin" && !location.pathname.startsWith("/admin")) {

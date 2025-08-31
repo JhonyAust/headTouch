@@ -1,11 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
+import axiosInstance from "@/components/api/axiosInstance";
 // ✅ Get all users
 export const getAllUsersForAdmin = createAsyncThunk(
     "admin/getAllUsers",
     async() => {
-        const response = await axios.get("http://localhost:5000/api/admin/users", {
+        const response = await axiosInstance.get("/api/admin/users", {
             withCredentials: true,
         });
         console.log("Users from backend:", response.data);
@@ -17,7 +16,7 @@ export const getAllUsersForAdmin = createAsyncThunk(
 export const fetchUserStats = createAsyncThunk(
     "admin/fetchUserStats",
     async() => {
-        const response = await axios.get("http://localhost:5000/api/admin/users/stats/weekly", {
+        const response = await axiosInstance.get("/api/admin/users/stats/weekly", {
             withCredentials: true,
         });
         console.log("Weekly user stats:", response.data.data);
