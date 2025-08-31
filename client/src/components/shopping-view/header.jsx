@@ -50,7 +50,7 @@ function Header() {
 
         {/* Middle: Search Bar */}
   
-      <div className="hidden sm:flex flex-1 max-w-md mx-4">
+      <div className="flex flex-1 max-w-md  mx-4">
         <div className="relative w-full">
           <input
             type="text"
@@ -60,7 +60,7 @@ function Header() {
               if (e.key === "Enter") handleSearch();
             }}
             placeholder="Search HeadTouch"
-            className="w-full border rounded pl-10 pr-4 py-2 focus:outline-none"
+            className="w-full border rounded pl-10 pr-4 py-1 focus:outline-none"
           />
           <FaSearch
             onClick={handleSearch}
