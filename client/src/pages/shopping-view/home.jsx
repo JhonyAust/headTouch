@@ -242,30 +242,40 @@ useEffect(() => {
         </motion.div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-12">
-        <motion.div
-          className="container mx-auto px-4"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-4xl mb-12 px-12">Featured Products</h2>
-          <div className="grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 px-4 md:px-12">
-            {productList && productList.length > 0
-              ? productList.map((productItem) => (
-                  <ShoppingProductTile
-                    key={productItem._id}
-                    handleGetProductDetails={handleNavigateToProductDetails}
-                    product={productItem}
-                    handleAddtoCart={handleAddtoCart}
-                  />
-                ))
-              : null}
-          </div>
-        </motion.div>
-      </section>
+    {/* Featured Products */}
+<section className="py-12 bg-white">
+  <motion.div
+    className="container mx-auto px-4 sm:px-6 lg:px-12"
+    initial={{ opacity: 0, y: 50 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.3 }}
+    transition={{ duration: 0.6 }}
+  >
+    {/* Title */}
+    <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-8 text-gray-900 text-center md:text-left">
+      Featured Products
+    </h2>
+
+    {/* Grid Layout */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      {productList && productList.length > 0 ? (
+        productList.map((productItem) => (
+          <ShoppingProductTile
+            key={productItem._id}
+            handleGetProductDetails={handleNavigateToProductDetails}
+            product={productItem}
+            handleAddtoCart={handleAddtoCart}
+          />
+        ))
+      ) : (
+        <p className="col-span-full text-center text-gray-500">
+          No featured products available.
+        </p>
+      )}
+    </div>
+  </motion.div>
+</section>
+
 
      {/* 🚀 New Arrival Products */}
 <section className="py-12 bg-gray-50">
