@@ -19,8 +19,8 @@ function AdminHeader({ setOpen }) {
   const [newOrders, setNewOrders] = useState([]); // Holds up to 5 orders
   const socketRef = useRef(null);
 
-  useEffect(() => {
-  socketRef.current = io("http://localhost:5000");
+useEffect(() => {
+  socketRef.current = io("https://api.headtouchbd.com");
 
   socketRef.current.on("connect", () => {
     console.log("✅ Connected to socket server:", socketRef.current.id);
@@ -30,15 +30,16 @@ function AdminHeader({ setOpen }) {
     console.log("📢 New order received:", order);
     setNewOrders((prev) => {
       const updated = [order, ...prev];
-      return updated.slice(0, 6);
+      console.log("📌 Updated Orders:", updated);
+      return updated.slice(0, 6); // keep only 6 latest
     });
   });
-  console.log("New Orders is: ",newOrders);
 
   return () => {
-    socketRef.current.disconnect();
+    if (socketRef.current) socketRef.current.disconnect();
   };
 }, []);
+
 
 
   function handleLogout() {
