@@ -6,7 +6,7 @@ function AuthLayout() {
       <div className="hidden lg:flex items-center justify-center bg-[#E26049] w-1/2 px-12">
         <div className="max-w-md space-y-6 text-center text-primary-foreground">
           <h1 className="text-4xl font-extrabold tracking-tight text-[#E9E5DA]">
-            Welcome to DoubleSlash
+            Welcome to HeadTouch
           </h1>
         </div>
       </div>

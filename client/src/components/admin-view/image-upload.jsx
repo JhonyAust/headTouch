@@ -3,11 +3,11 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 import { Skeleton } from "../ui/skeleton";
 
 function ProductImageUpload({
-  uploadedImageUrls,
+  uploadedImageUrls = [],
   setUploadedImageUrls,
   isEditMode,
   isCustomStyling = false,
@@ -54,8 +54,8 @@ function ProductImageUpload({
     data.append("my_file", file);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/admin/products/upload-image",
+      const response = await axiosInstance.post(
+        "/api/admin/products/upload-image",
         data
       );
 

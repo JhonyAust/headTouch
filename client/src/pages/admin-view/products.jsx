@@ -34,9 +34,7 @@ const initialFormData = {
 function AdminProducts() {
   const [openCreateProductsDialog, setOpenCreateProductsDialog] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
-  const [imageFiles, setImageFiles] = useState([]); // multiple images
-  const [uploadedImageUrls, setUploadedImageUrls] = useState([]); // after upload
-  const [imageLoadingState, setImageLoadingState] = useState(false);
+  const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
   const [currentEditedId, setCurrentEditedId] = useState(null);
 
   const { productList } = useSelector((state) => state.adminProducts);
@@ -51,25 +49,32 @@ function AdminProducts() {
       images: uploadedImageUrls,
     };
 
-    currentEditedId !== null
-      ? dispatch(editProduct({ id: currentEditedId, formData: payload })).then((data) => {
+    if (currentEditedId !== null) {
+      // ✅ Edit product
+      dispatch(editProduct({ id: currentEditedId, formData: payload })).then(
+        (data) => {
           if (data?.payload?.success) {
             dispatch(fetchAllProducts());
             setFormData(initialFormData);
+            setUploadedImageUrls([]);
             setOpenCreateProductsDialog(false);
             setCurrentEditedId(null);
+            toast({ title: "Product updated successfully" });
           }
-        })
-      : dispatch(addNewProduct(payload)).then((data) => {
-          if (data?.payload?.success) {
-            dispatch(fetchAllProducts());
-            setOpenCreateProductsDialog(false);
-            setFormData(initialFormData);
-            setImageFiles([]);
-            setUploadedImageUrls([]);
-            toast({ title: "Product added successfully" });
-          }
-        });
+        }
+      );
+    } else {
+      // ✅ Add new product
+      dispatch(addNewProduct(payload)).then((data) => {
+        if (data?.payload?.success) {
+          dispatch(fetchAllProducts());
+          setOpenCreateProductsDialog(false);
+          setFormData(initialFormData);
+          setUploadedImageUrls([]);
+          toast({ title: "Product added successfully" });
+        }
+      });
+    }
   }
 
   function handleDelete(getCurrentProductId) {
@@ -80,33 +85,28 @@ function AdminProducts() {
     });
   }
 
-function isFormValid() {
-  // Check basic required string/number fields
-  const requiredFields = [
-    "title",
-    "description",
-    "category",
-    "price",
-    "salePrice",
-    "totalStock",
-  ];
+  function isFormValid() {
+    const requiredFields = [
+      "title",
+      "description",
+      "category",
+      "price",
+      "salePrice",
+      "totalStock",
+    ];
 
-  for (let field of requiredFields) {
-    if (!formData[field] || formData[field].toString().trim() === "") {
+    for (let field of requiredFields) {
+      if (!formData[field] || formData[field].toString().trim() === "") {
+        return false;
+      }
+    }
+
+    if (!uploadedImageUrls || uploadedImageUrls.length === 0) {
       return false;
     }
+
+    return true;
   }
-
-  // Check image upload
-  if (!uploadedImageUrls || uploadedImageUrls.length === 0) {
-    return false;
-  }
-
-  
-
-  return true;
-}
-
 
   useEffect(() => {
     dispatch(fetchAllProducts());
@@ -124,10 +124,11 @@ function isFormValid() {
         {productList?.map((productItem) => (
           <AdminProductTile
             key={productItem._id}
+            product={productItem}
             setFormData={setFormData}
             setOpenCreateProductsDialog={setOpenCreateProductsDialog}
             setCurrentEditedId={setCurrentEditedId}
-            product={productItem}
+            setUploadedImageUrls={setUploadedImageUrls}
             handleDelete={handleDelete}
           />
         ))}
@@ -149,19 +150,13 @@ function isFormValid() {
             </SheetTitle>
           </SheetHeader>
 
-          {/* ✅ Upload multiple images */}
+          {/* ✅ Upload multiple images with add/delete support */}
           <ProductImageUpload
-            imageFiles={imageFiles}
-            setImageFiles={setImageFiles}
             uploadedImageUrls={uploadedImageUrls}
             setUploadedImageUrls={setUploadedImageUrls}
-            imageLoadingState={imageLoadingState}
-            setImageLoadingState={setImageLoadingState}
-            isEditMode={currentEditedId !== null}
           />
 
-         <div className="py-6 space-y-6">
-            
+          <div className="py-6 space-y-6">
             <CommonForm
               onSubmit={onSubmit}
               formData={formData}

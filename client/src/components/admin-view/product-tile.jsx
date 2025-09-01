@@ -6,6 +6,7 @@ function AdminProductTile({
   setFormData,
   setOpenCreateProductsDialog,
   setCurrentEditedId,
+  setUploadedImageUrls,   // ✅ add this prop
   handleDelete,
 }) {
   return (
@@ -13,11 +14,12 @@ function AdminProductTile({
       <div>
         <div className="relative">
           <img
-           src={product?.images?.[0] ? product.images[0] : "/placeholder.png"}
+            src={product?.images?.[0] ? product.images[0] : "/placeholder.png"}
             alt={product?.title}
             className="w-full h-[200px] object-cover rounded-t-lg"
           />
         </div>
+
         <CardContent>
           <h2 className="text-xl font-bold mb-2 mt-2">{product?.title}</h2>
           <div className="flex justify-between items-center mb-2">
@@ -26,23 +28,26 @@ function AdminProductTile({
                 product?.salePrice > 0 ? "line-through" : ""
               } text-lg font-semibold text-primary`}
             >
-              ${product?.price}
+              ৳ {product?.price}
             </span>
             {product?.salePrice > 0 ? (
-              <span className="text-lg font-bold">${product?.salePrice}</span>
+              <span className="text-lg font-bold">৳ {product?.salePrice}</span>
             ) : null}
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between items-center">
+
+        <CardFooter className="flex justify-between items-center p-4">
           <Button
             onClick={() => {
               setOpenCreateProductsDialog(true);
               setCurrentEditedId(product?._id);
               setFormData(product);
+              setUploadedImageUrls(product?.images || []); // ✅ preload images
             }}
           >
             Edit
           </Button>
+
           <Button onClick={() => handleDelete(product?._id)}>Delete</Button>
         </CardFooter>
       </div>

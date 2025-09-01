@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Dialog } from "../ui/dialog";
+import { Dialog, DialogContent } from "../ui/dialog";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -29,17 +29,12 @@ function AdminOrdersView() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-     
     dispatch(getAllOrdersForAdmin());
-    
   }, [dispatch]);
 
   useEffect(() => {
-     if (orderDetails) {
-    setOpenDetailsDialog(true);
-  } else {
-    setOpenDetailsDialog(false);
-  }
+    if (orderDetails) setOpenDetailsDialog(true);
+    else setOpenDetailsDialog(false);
   }, [orderDetails]);
 
   const handleFetchOrderDetails = (getId) => {
@@ -59,63 +54,72 @@ function AdminOrdersView() {
       </CardHeader>
 
       <CardContent className="overflow-x-auto">
-        {/* 💡 Added overflow-x-auto to make table scrollable in small screens */}
-        <div className="min-w-[900px] overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Order ID</TableHead>
-                <TableHead>Order Date</TableHead>
-                <TableHead>Order Status</TableHead>
-                <TableHead>Order Price</TableHead>
-                <TableHead>
-                  <span className="sr-only">Details</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedOrders.map((orderItem) => (
-                <TableRow key={orderItem._id}>
-                  <TableCell><button
+        <Table className="min-w-[300px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Order ID</TableHead>
+              {/* Hide columns on mobile */}
+              <TableHead className="hidden md:table-cell">Order Date</TableHead>
+              <TableHead>Order Status</TableHead>
+              <TableHead className="hidden md:table-cell">Order Price</TableHead>
+              <TableHead>Details</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {paginatedOrders.map((orderItem) => (
+              <TableRow key={orderItem._id}>
+                <TableCell>
+                  <button
                     onClick={() => navigate(`/admin/orders/${orderItem._id}`)}
                     className="text-blue-600 hover:underline hover:text-blue-800 transition-colors duration-200 font-medium"
                   >
                     #{orderItem._id.slice(-5)}
-                  </button></TableCell>
-                  <TableCell>{orderItem?.orderDate.split("T")[0]}</TableCell>
-                  <TableCell>
-                    <Badge
-                      className={`py-1 px-3 ${
-                        orderItem?.orderStatus === "delivered"
-                          ? "bg-green-500"
-                          : orderItem?.orderStatus === "rejected"
-                          ? "bg-red-600"
-                          : "bg-black"
-                      }`}
-                    >
-                      {orderItem?.orderStatus}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>৳ {orderItem?.totalAmount}</TableCell>
-                  <TableCell>
-                    <Dialog
-                      open={openDetailsDialog}
-                      onOpenChange={() => {
-                        setOpenDetailsDialog(false);
-                        dispatch(resetOrderDetails());
-                      }}
-                    >
-                      <Button onClick={() => handleFetchOrderDetails(orderItem?._id)}>
-                        View Details
-                      </Button>
+                  </button>
+                </TableCell>
+
+                <TableCell className="hidden md:table-cell">
+                  {orderItem?.orderDate.split("T")[0]}
+                </TableCell>
+
+                <TableCell>
+                  <Badge
+                    className={`py-1 px-3 ${
+                      orderItem?.orderStatus === "delivered"
+                        ? "bg-green-500"
+                        : orderItem?.orderStatus === "rejected"
+                        ? "bg-red-600"
+                        : "bg-black"
+                    }`}
+                  >
+                    {orderItem?.orderStatus}
+                  </Badge>
+                </TableCell>
+
+                <TableCell className="hidden md:table-cell">
+                  ৳ {orderItem?.totalAmount}
+                </TableCell>
+
+                <TableCell>
+                  <Dialog
+                    open={openDetailsDialog}
+                    onOpenChange={() => {
+                      setOpenDetailsDialog(false);
+                      dispatch(resetOrderDetails());
+                    }}
+                  >
+                    <Button onClick={() => handleFetchOrderDetails(orderItem?._id)}>
+                      View Details
+                    </Button>
+                    <DialogContent className="w-full max-w-md sm:max-w-lg mx-auto">
                       <AdminOrderDetailsView orderDetails={orderDetails} />
-                    </Dialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
