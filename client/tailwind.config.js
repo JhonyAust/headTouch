@@ -52,7 +52,7 @@ module.exports = {
                     foreground: "hsl(var(--card-foreground))",
                 },
                 ht_primary: '#EE751A',
-                ht_primary_hover: '#f07f2c',
+                ht_primary_hover: '#F29850',
                 ht_secondary: '#11224D',
                 ht_secondary_hover: '#1a3473',
                 ds_orange: '#f3db44',
