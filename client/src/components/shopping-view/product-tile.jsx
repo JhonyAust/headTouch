@@ -128,7 +128,7 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
         {product?.totalStock === 0 ? (
           <Button className="w-full opacity-60 cursor-not-allowed">Out Of Stock</Button>
         ) : (
-          <Button onClick={addToCartHandler}  className="w-full p-2 text-xs bg-ds_orange hover:bg-ds_orange_hover text-black">
+          <Button onClick={addToCartHandler}  className="w-full p-2 text-xs bg-ds_orange hover:bg-ds_orange_hover text-white">
             ADD TO CART
           </Button>
         )}

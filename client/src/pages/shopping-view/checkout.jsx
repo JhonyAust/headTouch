@@ -322,7 +322,7 @@ function Checkout() {
 
                 <Button
                   onClick={handlePlaceOrder}
-                  className="w-full mt-4 text-black bg-ds_orange hover:bg-ds_orange_hover"
+                  className="w-full mt-4 text-white bg-ds_orange hover:bg-ds_orange_hover"
                   disabled={isPlacingOrder}
                 >
                   {isPlacingOrder ? "Placing Order..." : "PLACE ORDER"}
