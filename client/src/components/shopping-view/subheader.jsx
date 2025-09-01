@@ -65,75 +65,9 @@ function Subheader() {
   }
 
   return (
-    <div className="bg-gray-100 shadow flex items-center justify-between px-4 py-2 mt-14 sm:mt-16">
+    <div className="bg-gray-100 shadow hidden sm:flex items-center justify-between px-4 py-2 mt-14 sm:mt-16">
       {/* Left: Menu Sheet */}
-      <Sheet open={openMenuSheet} onOpenChange={setOpenMenuSheet}>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setOpenMenuSheet(true)}
-        >
-          <Menu className="h-6 w-6" />
-        </Button>
-        <SheetContent side="left">
-          <div className="p-4 space-y-4">
-            {/* Categories */}
-            <ul className="space-y-6">
-              <li className="font-bold">Shop by Category</li>
-              {shoppingViewHeaderMenuItems.slice(2).map((menuItem) => (
-                <li
-                  key={menuItem.id}
-                  className="pl-2 cursor-pointer hover:text-orange-600"
-                  onClick={() => handleNavigate(menuItem)}
-                >
-                  {menuItem.label}
-                </li>
-              ))}
-            </ul>
-
-            {/* Login/Profile */}
-          <div className="mt-8 border-t pt-4">
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <div className="flex items-center gap-2 cursor-pointer">
-                    <Avatar className="bg-black">
-                      <AvatarFallback className="bg-black text-white font-extrabold">
-                        {user?.userName[0].toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="font-semibold">{user?.userName}</span>
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent  className="w-48">
-                  <DropdownMenuLabel>Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate("/shop/account")}>
-                    <UserCog className="mr-2 h-4 w-4" />
-                    My Account
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => dispatch(logoutUser())}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <button
-                onClick={() => dispatch(openLoginPopup())}
-                className="flex items-center gap-2 text-gray-700 hover:text-orange-600"
-              >
-                <FaUserCircle className="text-2xl" />
-                <span>Login</span>
-              </button>
-            )}
-          </div>
-
-          </div>
-        </SheetContent>
-
-      </Sheet>
+      <div></div>
 
       {/* Middle: shoppingViewHeaderMenuItems */}
       <nav className="hidden lg:flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">

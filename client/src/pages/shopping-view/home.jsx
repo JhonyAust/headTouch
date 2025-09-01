@@ -159,7 +159,7 @@ function ShoppingHome() {
       <section className="py-12 bg-gray-50">
         {/* <motion.div> */}
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl sm:text-4xl mb-12 px-12">Shop by Category</h2>
+          <h2 className="text-2xl sm:text-4xl mb-12 px-4 md:px-12">Shop by Category</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-0 px-2 md:px-12">
             {categoriesWithImages.map((categoryItem) => (
               <div
@@ -188,7 +188,7 @@ function ShoppingHome() {
       <section className="py-12 bg-white">
         {/* <motion.div> */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-8 text-gray-900 text-center md:text-left">
+          <h2 className="text-2xl sm:text-4xl mb-12  ">
             Featured Products
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -215,7 +215,7 @@ function ShoppingHome() {
       <section className="py-12 bg-gray-50">
         {/* <motion.div> */}
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl mb-12 px-12">New Arrival Products</h2>
+          <h2 className="text-2xl sm:text-4xl mb-12 px-4 md:px-12">New Arrival Products</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 px-4 md:px-12">
             {newArrivals && newArrivals.length > 0 ? (
               newArrivals.map((productItem) => (
