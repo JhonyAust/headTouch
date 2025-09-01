@@ -117,9 +117,9 @@ function ShoppingHome() {
   }, [dispatch]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen mt-14 md:mt-0">
       {/* Banner */}
-      <div className="relative w-full h-[300px] md:h-[450px] overflow-hidden">
+      <div className="relative w-full h-[200px] md:h-[500px] overflow-hidden">
         {featureImageList &&
           featureImageList.length > 0 &&
           featureImageList.map((slide, index) => (
@@ -128,7 +128,7 @@ function ShoppingHome() {
               key={index}
               className={`${
                 index === currentSlide ? "opacity-100" : "opacity-0"
-              } absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000`}
+              } absolute top-0 left-0 w-full h-full object-fill transition-opacity duration-1000`}
             />
           ))}
         <Button
