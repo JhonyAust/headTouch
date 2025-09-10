@@ -170,7 +170,7 @@ function Checkout() {
     ) + shippingCharge;
 
   return (
-    <div className="bg-[#F5F5F5] min-h-screen">
+    <div className="bg-[#F5F5F5] min-h-screen mt-12 sm:mt-0">
       {/* Banner Image */}
       {/* <div className="relative h-[300px] w-full overflow-hidden">
         <img src={img} className="h-full w-full object-cover object-center" alt="Checkout banner" />

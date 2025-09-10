@@ -73,7 +73,7 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
   };
 
   return (
-    <Card className="w-full max-w-sm mx-auto overflow-hidden relative">
+    <Card className="w-full max-w-xs mx-auto overflow-hidden relative">
       {/* Heart Toggle Button */}
       <HeartToggle isActive={isWishlisted} onClick={handleToggleWishlist} />
 
@@ -83,7 +83,7 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
             src={product?.images?.[0] ? product.images[0] : "/placeholder.png"}
             alt={product?.title}
             onClick={() => handleGetProductDetails(product)}
-            className="w-full h-[200px] object-cover rounded-t-lg transition-transform duration-300 group-hover:scale-110"
+            className="w-full h-[160px] object-cover rounded-t-lg transition-transform duration-300 group-hover:scale-110"
           />
           {product?.totalStock === 0 ? (
             <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
@@ -99,24 +99,24 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
             </Badge>
           ) : null}
         </div>
-        <CardContent className="p-6 sm:p-4 ">
-          <h2 className="text-xl font-semibold truncate" style={{ maxWidth: "100%" }}>
+        <CardContent className="p-3 sm:p-4">
+          <h2 className="text-base  sm:text-lg font-semibold truncate" style={{ maxWidth: "100%" }}>
             {product?.title}
           </h2>
-          <div className="flex justify-between items-center mt-6">
-             <div className="flex-col mb-2">
+          <div className="flex justify-between items-center mt-4 sm:mt-6">
+             <div className="flex-col ">
 
              <div>
             {product?.salePrice > 0 && (
-              <span className="text-lg font-semibold text-black">
+              <span className="text-sm font-semibold text-black">
                 ৳ {product?.salePrice}
               </span>
             )}
             </div>
             <div>
             <span
-              className={`text-xs font-semibold text-[#565959] ${
-                product?.salePrice > 0 ? "line-through" : ""
+              className={`font-semibold  ${
+                product?.salePrice > 0 ? "line-through text-xs text-[#565959] " : "text-sm  text-black "
               }`}
             >
               ৳ {product?.price}
@@ -126,9 +126,9 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
           </div>
           <CardFooter>
         {product?.totalStock === 0 ? (
-          <Button className="w-full opacity-60 cursor-not-allowed">Out Of Stock</Button>
+          <Button className="w-full opacity-60 p-0 cursor-not-allowed">Out Of Stock</Button>
         ) : (
-          <Button onClick={addToCartHandler}  className="w-full p-2 text-xs bg-ds_orange hover:bg-ds_orange_hover text-white">
+          <Button onClick={addToCartHandler}  className="w-full py-0 h-8 sm:h-10 px-2 mb-2 text-[11px] bg-ds_orange hover:bg-ds_orange_hover text-white">
             ADD TO CART
           </Button>
         )}

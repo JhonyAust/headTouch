@@ -1,20 +1,39 @@
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { FaHome, FaShoppingCart, FaHeart, FaUser } from "react-icons/fa";
+import { FaHome, FaShoppingCart, FaUser } from "react-icons/fa";
 import CartSheetButton from "../shopping-view/CartSheetButton";
 import WishlistIconWithCount from "../shopping-view/WishlistIconWithCount";
 
 const navItems = [
   { to: "/shop/listing", icon: <FaHome />, label: "Shop" },
-  { type: "cart", icon: <FaShoppingCart />, label: "Cart" }, 
+  { type: "cart", icon: <FaShoppingCart />, label: "Cart" },
   { type: "wishlist" },
   { to: "/shop/account", icon: <FaUser />, label: "Account" },
 ];
 
-
 const BottomNav = () => {
+  const [showNav, setShowNav] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setShowNav(true);
+      } else {
+        setShowNav(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow z-50 flex justify-around items-center py-4 sm:hidden">
-     {navItems.map(({ to, icon, label, type }) => {
+    <div
+      className={`fixed bottom-0 left-0 right-0 bg-white shadow z-50 flex justify-around items-center py-3 sm:hidden transition-transform duration-300 ${
+        showNav ? "translate-y-0" : "translate-y-full"
+      }`}
+    >
+      {navItems.map(({ to, icon, label, type }) => {
         if (type === "cart") {
           return <CartSheetButton key="cart" icon={icon} label={label} />;
         }
@@ -28,7 +47,9 @@ const BottomNav = () => {
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex flex-col items-center text-xs ${isActive ? "text-blue-500" : "text-gray-500"}`
+              `flex flex-col items-center text-xs ${
+                isActive ? "text-blue-500" : "text-gray-500"
+              }`
             }
           >
             <div className="text-lg">{icon}</div>
@@ -36,10 +57,8 @@ const BottomNav = () => {
           </NavLink>
         );
       })}
-
     </div>
   );
 };
-
 
 export default BottomNav;

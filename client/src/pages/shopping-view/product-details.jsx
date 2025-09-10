@@ -194,7 +194,7 @@ const handleToggleWishlist = async () => {
   if (!productDetails) return <div>Loading...</div>;
 
   return (
-    <div className="container mx-auto px-6 py-10">
+    <div className="container mx-auto px-6 py-10 mt-12 sm:mt-0">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
         <div>
           <div className="border overflow-hidden rounded mb-3">
