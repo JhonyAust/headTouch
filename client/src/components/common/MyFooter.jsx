@@ -8,7 +8,7 @@ import {
 
 export default function Footer() {
   const socialIcons = [
-    { icon: <FaFacebookF />, link: "https://facebook.com" },
+    { icon: <FaFacebookF />, link: "https://www.facebook.com/profile.php?id=61579209638211" },
     { icon: <FaLinkedinIn />, link: "https://linkedin.com" },
     { icon: <FaYoutube />, link: "https://youtube.com" },
     { icon: <FaXTwitter />, link: "https://twitter.com" },
@@ -40,7 +40,7 @@ export default function Footer() {
 
         {/* Product Section */}
         <div>
-          <h3 className="text-xl font-semibold mb-4">Product</h3>
+          {/* <h3 className="text-xl font-semibold mb-4">Product</h3>
           <ul className="space-y-2 text-sm">
             <li>
               <a href="#" className={linkClass}>Grid & Layouts</a>
@@ -63,12 +63,12 @@ export default function Footer() {
             <li>
               <a href="#" className={linkClass}>Accessibility</a>
             </li>
-          </ul>
+          </ul> */}
         </div>
 
         {/* Company Section */}
         <div>
-          <h3 className="text-xl font-semibold mb-4">Company</h3>
+          {/* <h3 className="text-xl font-semibold mb-4">Company</h3>
           <ul className="space-y-2 text-sm">
             <li>
               <a href="#" className={linkClass}>Affiliates</a>
@@ -79,7 +79,7 @@ export default function Footer() {
             <li>
               <a href="#" className={linkClass}>Cookie</a>
             </li>
-          </ul>
+          </ul> */}
         </div>
 
         {/* Resources Section */}
@@ -87,20 +87,9 @@ export default function Footer() {
           <h3 className="text-xl font-semibold mb-4">Resources</h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <a href="#" className={linkClass}>Blog</a>
+              <a href="#" className={linkClass}>About Us</a>
             </li>
-            <li>
-              <a href="#" className={linkClass}>Documentation</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Release Notes</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Support</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Pricing</a>
-            </li>
+    
             <li>
               <a href="#" className={linkClass}>Contact Us</a>
             </li>
