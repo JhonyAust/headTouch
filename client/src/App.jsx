@@ -35,6 +35,8 @@ import Wishlist from "./pages/shopping-view/WishList";
 import BottomNav from "./components/common/BottomNav";
 import AppInit from "./components/shopping-view/AppInit";
 import { fetchCartItems } from "./store/shop/cart-slice";
+import LoadingScreen from "./components/common/LoadingScreen";
+
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
     (state) => state.auth
@@ -67,7 +69,7 @@ useEffect(() => {
     }
   }, [isAuthenticated, user, navigate, location.pathname]);
 
-  if (isLoading) return <Skeleton className="w-[800] bg-black h-[600px]" />;
+  if (isLoading) return <LoadingScreen />; 
 
   console.log(isLoading, user);
 

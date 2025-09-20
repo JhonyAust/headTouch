@@ -277,7 +277,7 @@ function HorizontalScroll({ products, handleNavigateToProductDetails, handleAddt
       >
         {products && products.length > 0 ? (
           products.map((productItem) => (
-            <div key={productItem._id} className="w-1/2 sm:min-w-[251px] shrink-0">
+            <div key={productItem._id} className="w-1/2 sm:w-auto sm:min-w-[250px] shrink-0">
               <ShoppingProductTile
                 handleGetProductDetails={handleNavigateToProductDetails}
                 product={productItem}
