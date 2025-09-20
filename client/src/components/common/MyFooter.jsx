@@ -40,46 +40,12 @@ export default function Footer() {
 
         {/* Product Section */}
         <div>
-          {/* <h3 className="text-xl font-semibold mb-4">Product</h3>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a href="#" className={linkClass}>Grid & Layouts</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Typography</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Media Manager</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Form Builder</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Pop-up Builder</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Interaction & Animations</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Accessibility</a>
-            </li>
-          </ul> */}
+         
         </div>
 
         {/* Company Section */}
         <div>
-          {/* <h3 className="text-xl font-semibold mb-4">Company</h3>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a href="#" className={linkClass}>Affiliates</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Terms & Privacy</a>
-            </li>
-            <li>
-              <a href="#" className={linkClass}>Cookie</a>
-            </li>
-          </ul> */}
+        
         </div>
 
         {/* Resources Section */}
