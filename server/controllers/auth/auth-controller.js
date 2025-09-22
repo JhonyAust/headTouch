@@ -85,6 +85,64 @@ const loginUser = async(req, res) => {
     }
 };
 
+// google-login
+const googleLogin = async (req, res) => {
+  const { email, userName } = req.body;
+
+  try {
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = new User({
+        userName,
+        email,
+        password: "", // not needed for Google login
+      });
+      await user.save();
+
+      console.log("✅ New user created from Google login:", user.email);
+    } else {
+      console.log("ℹ️ Existing user logged in with Google:", user.email);
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+        email: user.email,
+        userName: user.userName,
+      },
+      "CLIENT_SECRET_KEY",
+      { expiresIn: "60m" }
+    );
+
+    console.log("🎉 JWT token generated for:", user.email);
+
+    res
+      .cookie("token", token, { httpOnly: true, secure: false })
+      .json({
+        success: true,
+        message: "Google login successful",
+        user: {
+          email: user.email,
+          role: user.role,
+          id: user._id,
+          userName: user.userName,
+        },
+      });
+  } catch (e) {
+    console.error("❌ Google login error:", e.message || e);
+    res.status(500).json({
+      success: false,
+      message: "Google login failed",
+      error: e.message || e,
+    });
+  }
+};
+
+
+
+
 //logout
 
 const logoutUser = (req, res) => {
@@ -125,4 +183,4 @@ const adminMiddleware = (req, res, next) => {
 };
 
 
-module.exports = { registerUser, loginUser, logoutUser, authMiddleware, adminMiddleware };
+module.exports = { registerUser, loginUser, logoutUser, authMiddleware, adminMiddleware,googleLogin };

@@ -215,7 +215,7 @@ function ShoppingHome() {
 
 
       {/* All Products */}
-      <section className="py-12 bg-white">
+      <section className="py-4 sm:py-8 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
           <h2 className="text-2xl sm:text-4xl mb-8">All Products</h2>
 

@@ -14,6 +14,10 @@ import {
   clearLocalWishlistHelper,
 } from "@/store/shop/wishlist-slice-local";
 import { toggleWishlistItem, fetchWishlist } from "@/store/shop/wishlist-slice";
+import { loginWithGoogle } from "@/store/auth-slice";
+
+
+
 const initialLoginState = {
   email: "",
   password: "",
@@ -112,6 +116,18 @@ const handleLoginSubmit = async (e) => {
     });
   };
 
+  const handleGoogleLogin = async () => {
+  const result = await dispatch(loginWithGoogle());
+
+  if (result?.payload?.success) {
+    toast({ title: result.payload.message });
+    dispatch(closePopup());
+  } else {
+    toast({ title: result?.payload?.message || result?.error, variant: "destructive" });
+  }
+};
+
+
   return (
     <Dialog open={isOpen} onOpenChange={() => dispatch(closePopup())}>
       <DialogContent className="max-w-[400px]">
@@ -143,6 +159,7 @@ const handleLoginSubmit = async (e) => {
             )}
           </p>
         </div>
+       
 
         {mode === "login" ? (
           <CommonForm
@@ -160,6 +177,15 @@ const handleLoginSubmit = async (e) => {
             setFormData={setRegisterData}
             onSubmit={handleRegisterSubmit}
           />
+        )}
+
+         {mode === "login" && (
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full bg-red-500 text-white py-2 rounded mt-3"
+          >
+            Continue with Google
+          </button>
         )}
       </DialogContent>
     </Dialog>
