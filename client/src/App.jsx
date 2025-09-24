@@ -36,6 +36,8 @@ import BottomNav from "./components/common/BottomNav";
 import AppInit from "./components/shopping-view/AppInit";
 import { fetchCartItems } from "./store/shop/cart-slice";
 import LoadingScreen from "./components/common/LoadingScreen";
+import AboutUs from "./pages/shopping-view/about-us";
+import ContactUs from "./pages/shopping-view/contact-us";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -106,6 +108,8 @@ useEffect(() => {
           <Route path="product/:category/:slug" element={<ProductDetails />} />
           <Route path="search" element={<SearchProducts />} />
           <Route path="wishlist" element={<Wishlist />} />
+          <Route path="about" element={<AboutUs />} />
+          <Route path="contact" element={<ContactUs />} />
 
 
 

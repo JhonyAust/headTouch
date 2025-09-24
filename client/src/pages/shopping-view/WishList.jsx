@@ -83,7 +83,7 @@ function Wishlist() {
   }, [dispatch, user]);
 
   return (
-    <div className="container mx-auto px-4 mt-8 mb-12 min-h-screen">
+    <div className="container mx-auto px-4 mt-20 sm:mt-8 mb-12 min-h-screen">
       <h1 className="text-3xl font-bold mb-8 text-center">My Wishlist</h1>
 
       {wishlistProducts && wishlistProducts.length === 0 ? (

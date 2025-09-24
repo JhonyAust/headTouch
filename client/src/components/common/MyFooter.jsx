@@ -5,6 +5,7 @@ import {
   FaYoutube,
   FaXTwitter,
 } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   const socialIcons = [
@@ -51,15 +52,19 @@ export default function Footer() {
         {/* Resources Section */}
         <div>
           <h3 className="text-xl font-semibold mb-4">Resources</h3>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a href="#" className={linkClass}>About Us</a>
-            </li>
-    
-            <li>
-              <a href="#" className={linkClass}>Contact Us</a>
-            </li>
-          </ul>
+        <ul className="space-y-2 text-sm">
+          <li>
+            <Link to="shop/about" className={linkClass}>
+              About Us
+            </Link>
+          </li>
+          <li>
+            <Link to="shop/contact" className={linkClass}>
+              Contact Us
+            </Link>
+          </li>
+        </ul>
+
         </div>
       </div>
 
