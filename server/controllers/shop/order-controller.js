@@ -15,6 +15,9 @@ const createOrder = async(req, res) => {
             orderDate = new Date(),
             orderUpdateDate = new Date(),
             cartId,
+            couponCode,
+            discountPercentage,
+            discountAmount,
         } = req.body;
 
         // ✅ Update product stock
@@ -45,6 +48,9 @@ const createOrder = async(req, res) => {
             paymentMethod,
             paymentStatus,
             totalAmount,
+            couponCode,
+            discountPercentage,
+            discountAmount,
             orderDate,
             orderUpdateDate,
         });

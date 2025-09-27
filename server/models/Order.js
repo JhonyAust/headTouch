@@ -12,6 +12,7 @@ const OrderSchema = new mongoose.Schema({
         size: String,
     }, ],
     addressInfo: {
+        name: String,
         addressId: String,
         address: String,
         city: String,
@@ -19,6 +20,9 @@ const OrderSchema = new mongoose.Schema({
         phone: String,
         notes: String,
     },
+    couponCode: { type: String, default: null },
+    discountPercentage: { type: Number, default: 0 },
+    discountAmount: { type: Number, default: 0 },
     orderStatus: String, // e.g. 'confirmed', 'pending'
     paymentMethod: String, // e.g. 'cash_on_delivery'
     paymentStatus: String, // e.g. 'paid', 'unpaid'

@@ -101,6 +101,15 @@ function AdminOrderDetailsPage() {
               )}
             </div>
           </div>
+          {orderDetails?.couponCode && (
+          <div className="mt-4">
+            <p className="font-semibold">Coupon Applied:</p>
+            <p>Code: {orderDetails.couponCode}</p>
+            <p>Discount: {orderDetails.discountPercentage}%</p>
+            <p>Discount Amount: ৳ {orderDetails.discountAmount}</p>
+          </div>
+        )}
+
         </CardContent>
       </Card>
     </div>

@@ -5,6 +5,7 @@ import {
   ShoppingBasket,
   Users,
   ImageIcon,
+  Tag,
 } from "lucide-react";
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
@@ -40,6 +41,12 @@ const adminSidebarMenuItems = [
     label: "Features",
     path: "/admin/features",
     icon: <ImageIcon />, // 🖼️ better visual cue for slider/banner
+  },
+  {
+    id: "coupons",
+    label: "Coupons",
+    path: "/admin/coupons",
+    icon: <Tag />, 
   },
 ];
 

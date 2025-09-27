@@ -9,7 +9,7 @@ import UserCartItemsContent from "@/components/shopping-view/cart-items-content"
 import img from "../../assets/account.jpg";
 import { fetchCartItems } from "@/store/shop/cart-slice"; 
 import { clearLocalCart } from "@/store/shop/cart-slice-local";
-
+import { validateCoupon, resetCoupon } from "@/store/shop/shop-coupon-slice";
 
 function Checkout() {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ function Checkout() {
   const { user } = useSelector((state) => state.auth);
   const { cartItems: shopCartItems } = useSelector((state) => state.shopCart);
   const { items: localCartItems } = useSelector((state) => state.localcart);
-
+  const { appliedCoupon, discount, error } = useSelector((state) => state.coupon);
   const cartItems = user ? shopCartItems : { items: localCartItems };
 
   const { toast } = useToast();
@@ -34,7 +34,28 @@ function Checkout() {
   const [saveBilling, setSaveBilling] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [shippingType, setShippingType] = useState("inside"); // default is inside Dhaka
+  const [couponCode, setCouponCode] = useState("");
   const shippingCharge = shippingType === "inside" ? 80 : 150;
+
+  const totalCartAmount =
+    cartItems && cartItems.items && cartItems.items.length > 0
+      ? cartItems.items.reduce(
+          (sum, item) =>
+            sum +
+            (item.salePrice > 0 ? item.salePrice : item.price) * item.quantity,
+          0
+        )
+      : 0;
+      const discountAmount = appliedCoupon ? (totalCartAmount * discount) / 100 : 0;
+
+      const totalAmount =
+    (cartItems && cartItems.items
+      ? cartItems.items.reduce(
+          (sum, item) =>
+            sum + (item.salePrice > 0 ? item.salePrice : item.price) * item.quantity,
+          0
+        )
+      : 0) + shippingCharge - discountAmount;
 
   // Load saved billing details if user is logged in
   useEffect(() => {
@@ -108,6 +129,8 @@ function Checkout() {
       orderUpdateDate: new Date(),
       paymentId: "",
       payerId: "",
+      couponCode: appliedCoupon?.code || null, 
+      discountAmount: discountAmount || 0,
     };
 
     setIsPlacingOrder(true);
@@ -153,21 +176,18 @@ function Checkout() {
     });
   };
 
-  const totalCartAmount =
-    cartItems && cartItems.items && cartItems.items.length > 0
-      ? cartItems.items.reduce(
-          (sum, item) =>
-            sum +
-            (item.salePrice > 0 ? item.salePrice : item.price) * item.quantity,
-          0
-        )
-      : 0;
+  
 
-       const totalAmount =cartItems && cartItems.items && cartItems.items.reduce(
-      (sum, item) =>
-        sum + (item.salePrice > 0 ? item.salePrice : item.price) * item.quantity,
-      0
-    ) + shippingCharge;
+      const handleApplyCoupon = () => {
+    if (couponCode.trim()) {
+      dispatch(validateCoupon(couponCode));
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    dispatch(resetCoupon());
+    setCouponCode("");
+  };
 
   return (
     <div className="bg-[#F5F5F5] min-h-screen mt-12 sm:mt-0">
@@ -256,6 +276,33 @@ function Checkout() {
                 <UserCartItemsContent key={item.productId} cartItem={item} />
               ))}
 
+              {/* ✅ Coupon Section */}
+              <div className="border-t pt-4">
+                <label className="block text-sm font-medium mb-2">Have a coupon?</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    className="flex-1 border rounded px-3 py-2"
+                    placeholder="Enter coupon code"
+                  />
+                  {!appliedCoupon ? (
+                    <Button onClick={handleApplyCoupon}>Apply</Button>
+                  ) : (
+                    <Button onClick={handleRemoveCoupon} variant="destructive">
+                      Remove
+                    </Button>
+                  )}
+                </div>
+                {error && <p className="text-red-500 mt-2">{error}</p>}
+                {appliedCoupon && (
+                  <p className="text-green-600 mt-2">
+                    ✅ Coupon <b>{appliedCoupon.code}</b> applied! You saved ৳{discount}.
+                  </p>
+                )}
+              </div>
+
                <div className="mt-4 space-y-4">
 
                   {/* Shipping Option Selection */}
@@ -296,6 +343,13 @@ function Checkout() {
                     <span>Shipping</span>
                     <span className="text-ht_primary">৳ {shippingCharge}</span>
                   </div>
+
+                  {appliedCoupon && (
+                  <div className="flex justify-between font-semibold text-md text-green-600">
+                    <span>Discount</span>
+                    <span>-৳ {discountAmount}</span>
+                  </div>
+                )}
 
                   {/* Total */}
                   <div className="flex justify-between font-bold text-lg border-t pt-4">

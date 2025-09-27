@@ -14,7 +14,8 @@ import commonFeatureSlice from "./common-slice";
 import localCartSlice from "./shop/cart-slice-local";
 import wishlistSlice from "./shop/wishlist-slice"; // ✅ NEW
 import localWishlistSlice from "./shop/wishlist-slice-local"; // ✅ NEW
-
+import adminCouponSlice from "./admin/coupon-slice";
+import couponSlice from "./shop/shop-coupon-slice";
 const store = configureStore({
     reducer: {
         auth: authReducer,
@@ -22,7 +23,7 @@ const store = configureStore({
         adminProducts: adminProductsSlice,
         adminOrder: adminOrderSlice,
         adminUser: adminUserSlice,
-
+        adminCoupon: adminCouponSlice,
         loginRegister: loginRegisterSlice,
 
         shopProducts: shopProductsSlice,
@@ -31,7 +32,7 @@ const store = configureStore({
         shopOrder: shopOrderSlice,
         shopSearch: shopSearchSlice,
         shopReview: shopReviewSlice,
-
+        coupon: couponSlice,
         commonFeature: commonFeatureSlice,
         localcart: localCartSlice,
 

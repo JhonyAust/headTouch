@@ -38,6 +38,7 @@ import { fetchCartItems } from "./store/shop/cart-slice";
 import LoadingScreen from "./components/common/LoadingScreen";
 import AboutUs from "./pages/shopping-view/about-us";
 import ContactUs from "./pages/shopping-view/contact-us";
+import AdminCouponsView from "./pages/admin-view/admin-coupon-view";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -98,6 +99,7 @@ useEffect(() => {
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="coupons" element={<AdminCouponsView />} />
           <Route path="features" element={<AdminFeatures />} />
           <Route path="orders/:orderId" element={<AdminOrderDetailsPage />} />
         </Route>

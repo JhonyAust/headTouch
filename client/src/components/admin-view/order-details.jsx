@@ -98,13 +98,21 @@ function AdminOrderDetailsView({ orderDetails }) {
                   ))
                 : null}
             </ul>
+            {orderDetails?.discountAmount > 0 && (
+            <div className="flex mt-1 items-center justify-between">
+              <p className="font-medium">Discount</p>
+              <Label className="text-green-600 font-semibold">
+                Discount applied (-${orderDetails?.discountAmount})
+              </Label>
+            </div>
+          )}
           </div>
         </div>
         <div className="grid gap-4">
           <div className="grid gap-2">
             <div className="font-medium">Shipping Info</div>
             <div className="grid gap-0.5 text-muted-foreground">
-              <span>{user.userName}</span>
+              <span>{orderDetails?.addressInfo?.name}</span>
               <span>{orderDetails?.addressInfo?.address}</span>
               <span>{orderDetails?.addressInfo?.city}</span>
               <span>{orderDetails?.addressInfo?.pincode}</span>
