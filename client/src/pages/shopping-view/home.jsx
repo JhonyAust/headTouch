@@ -132,7 +132,7 @@ function ShoppingHome() {
 
       <section className="py-4 sm:py-8 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
-          <h2 className="text-2xl sm:text-4xl mb-8">Explore Products</h2>
+          <h2 className="text-2xl sm:text-4xl mb-2 sm:mb-6">Explore Products</h2>
 
           {/* Tabs */}
           <div className="w-full flex justify-center ">
@@ -217,7 +217,7 @@ function ShoppingHome() {
       {/* All Products */}
       <section className="py-4 sm:py-8 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
-          <h2 className="text-2xl sm:text-4xl mb-8">All Products</h2>
+          <h2 className="text-2xl sm:text-4xl mb-2 sm:mb-8">All Products</h2>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {allProducts && allProducts.length > 0 ? (

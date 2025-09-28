@@ -80,60 +80,76 @@ function Header() {
             </Button>
 
             <SheetContent side="left">
-              <div className="p-4 space-y-4">
-                <ul className="space-y-4">
-                  <li className="font-bold">Shop by Category</li>
-                  {shoppingViewHeaderMenuItems.map((menuItem) => (
-                    <li
-                      key={menuItem.id}
-                      className="pl-2 cursor-pointer hover:text-orange-600"
-                      onClick={() => handleNavigate(menuItem)}
-                    >
-                      {menuItem.label}
-                    </li>
-                  ))}
-                </ul>
+            <div className="p-4 space-y-6">
+              {/* Categories Section */}
+              <ul className="space-y-4">
+                <li className="font-bold">Shop by Category</li>
+                {shoppingViewHeaderMenuItems.map((menuItem) => (
+                  <li
+                    key={menuItem.id}
+                    className="pl-2 cursor-pointer hover:text-orange-600"
+                    onClick={() => handleNavigate(menuItem)}
+                  >
+                    {menuItem.label}
+                  </li>
+                ))}
+              </ul>
 
-                {/* Login/Profile */}
-                <div className="mt-6 border-t pt-4">
-                  {user ? (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <div className="flex items-center gap-2 cursor-pointer">
-                          <Avatar className="bg-black">
-                            <AvatarFallback className="bg-black text-ht_secondary font-extrabold">
-                              {user?.userName[0].toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="font-semibold">{user?.userName}</span>
-                        </div>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-48">
-                        <DropdownMenuLabel>Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => navigate("/shop/account")}>
-                          <UserCog className="mr-2 h-4 w-4" />
-                          My Account
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => dispatch(logoutUser())}>
-                          <LogOut className="mr-2 h-4 w-4" />
-                          Logout
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  ) : (
-                    <button
-                      onClick={() => dispatch(openLoginPopup())}
-                      className="flex items-center gap-2 text-gray-700 hover:text-orange-600"
-                    >
-                      <FaUserCircle className="text-ht_secondary text-2xl" />
-                      <span>Login</span>
-                    </button>
-                  )}
-                </div>
+              {/* About & Contact Section */}
+              <ul className="space-y-4 text-sm border-t pt-4">
+                <li>
+                  <Link to="/shop/about" className="hover:text-orange-600">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/shop/contact" className="hover:text-orange-600">
+                    Contact Us
+                  </Link>
+                </li>
+              </ul>
+
+              {/* Login/Profile Section */}
+              <div className="mt-6 border-t pt-4">
+                {user ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <div className="flex items-center gap-2 cursor-pointer">
+                        <Avatar className="bg-black">
+                          <AvatarFallback className="bg-black text-ht_secondary font-extrabold">
+                            {user?.userName[0].toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="font-semibold">{user?.userName}</span>
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-48">
+                      <DropdownMenuLabel>Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => navigate("/shop/account")}>
+                        <UserCog className="mr-2 h-4 w-4" />
+                        My Account
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => dispatch(logoutUser())}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <button
+                    onClick={() => dispatch(openLoginPopup())}
+                    className="flex items-center gap-2 text-gray-700 hover:text-orange-600"
+                  >
+                    <FaUserCircle className="text-ht_secondary text-2xl" />
+                    <span>Login</span>
+                  </button>
+                )}
               </div>
-            </SheetContent>
+            </div>
+          </SheetContent>
+
           </Sheet>
         </div>
 

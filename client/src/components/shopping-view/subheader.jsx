@@ -8,7 +8,7 @@ import WishlistIconWithCount from "./WishlistIconWithCount";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { shoppingViewHeaderMenuItems } from "@/config";
 import { Label } from "../ui/label";
-
+import { Link } from "react-router-dom";
 function Subheader() {
   const [openMenuSheet, setOpenMenuSheet] = useState(false);
   const navigate = useNavigate();
@@ -63,21 +63,37 @@ function Subheader() {
           </span>
 
           <SheetContent side="left">
-            <div className="p-4 space-y-4">
-              <ul className="space-y-4">
-                <li className="font-bold">Shop by Category</li>
-                {shoppingViewHeaderMenuItems.map((menuItem) => (
-                  <li
-                    key={menuItem.id}
-                    className="pl-2 cursor-pointer hover:text-orange-600"
-                    onClick={() => handleNavigate(menuItem)}
-                  >
-                    {menuItem.label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </SheetContent>
+          <div className="p-4 space-y-6">
+            {/* Categories Section */}
+            <ul className="space-y-4">
+              <li className="font-bold">Shop by Category</li>
+              {shoppingViewHeaderMenuItems.map((menuItem) => (
+                <li
+                  key={menuItem.id}
+                  className="pl-2 cursor-pointer hover:text-orange-600"
+                  onClick={() => handleNavigate(menuItem)}
+                >
+                  {menuItem.label}
+                </li>
+              ))}
+            </ul>
+
+            {/* Static Links Section */}
+            <ul className="space-y-4 text-sm border-t pt-4">
+              <li>
+                <Link to="/shop/about" className="hover:text-orange-600">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop/contact" className="hover:text-orange-600">
+                  Contact Us
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </SheetContent>
+
         </Sheet>
       </div>
 

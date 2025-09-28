@@ -279,12 +279,12 @@ function Checkout() {
               {/* ✅ Coupon Section */}
               <div className="border-t pt-4">
                 <label className="block text-sm font-medium mb-2">Have a coupon?</label>
-                <div className="flex gap-2">
+                <div className="flex gap-4">
                   <input
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    className="flex-1 border rounded px-3 py-2"
+                    className="flex-1 border rounded px-0 sm:px-3 py-2"
                     placeholder="Enter coupon code"
                   />
                   {!appliedCoupon ? (
@@ -298,7 +298,7 @@ function Checkout() {
                 {error && <p className="text-red-500 mt-2">{error}</p>}
                 {appliedCoupon && (
                   <p className="text-green-600 mt-2">
-                    ✅ Coupon <b>{appliedCoupon.code}</b> applied! You saved ৳{discount}.
+                    ✅ Coupon <b>{appliedCoupon.code}</b> applied! You saved ৳{discountAmount}.
                   </p>
                 )}
               </div>

@@ -20,11 +20,11 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#F9F9F9] py-12 px-6 mb-16 md:mb-0 -mt-40">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-gray-800">
+      <div className="flex flex-row justify-between items-center px-2 sm:px-8 md:px-20 text-gray-800">
         {/* Social Section */}
         <div>
           <h3 className="text-xl font-semibold mb-4">Social</h3>
-          <div className="flex gap-4">
+          <div className="flex mt-8 sm:mt-0 gap-4">
             {socialIcons.map((s, i) => (
               <a
                 key={i}
@@ -39,18 +39,9 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Product Section */}
-        <div>
-         
-        </div>
 
-        {/* Company Section */}
-        <div>
-        
-        </div>
-
-        {/* Resources Section */}
-        <div>
+       
+        <div> 
           <h3 className="text-xl font-semibold mb-4">Resources</h3>
         <ul className="space-y-2 text-sm">
           <li>
