@@ -19,7 +19,7 @@ export default function Footer() {
     "text-gray-600 hover:text-red-700 hover:underline transition duration-300";
 
   return (
-    <footer className="bg-[#F9F9F9] py-12 px-6 mb-16 md:mb-0 -mt-40">
+    <footer className="bg-[#F9F9F9] py-6 px-6 mb-16 md:mb-0 -mt-40">
       <div className="flex flex-row justify-between items-center px-2 sm:px-8 md:px-20 text-gray-800">
         {/* Social Section */}
         <div>

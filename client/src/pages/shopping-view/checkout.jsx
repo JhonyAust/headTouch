@@ -278,13 +278,13 @@ function Checkout() {
 
               {/* ✅ Coupon Section */}
               <div className="border-t pt-4">
-                <label className="block text-sm font-medium mb-2">Have a coupon?</label>
+                <label className="block text-sm font-medium mb-2">Have a Coupon?</label>
                 <div className="flex gap-4">
                   <input
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    className="flex-1 border rounded px-0 sm:px-3 py-2"
+                    className="w-full border rounded px-3 py-2"
                     placeholder="Enter coupon code"
                   />
                   {!appliedCoupon ? (
