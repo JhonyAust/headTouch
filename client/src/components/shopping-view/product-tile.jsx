@@ -128,7 +128,16 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
         {product?.totalStock === 0 ? (
           <Button className="w-full opacity-60 p-0 cursor-not-allowed">Out Of Stock</Button>
         ) : (
-          <Button onClick={addToCartHandler}  className="w-full py-0 h-8 sm:h-10 px-2 mb-2 text-[11px] bg-ds_orange hover:bg-ds_orange_hover text-white">
+          <Button onClick={addToCartHandler}  className="w-full py-0 h-8 sm:h-10 px-2 mb-2 text-[11px]
+    inline-flex items-center justify-center
+    rounded-md border border-transparent
+    bg-[linear-gradient(110deg,#EE751A_45%,#F5A05C_55%,#EE751A_100%)]
+    bg-[length:200%_100%]
+    animate-shimmer
+    font-medium text-white
+    transition-all
+    focus:outline-none focus:ring-2 focus:ring-orange-400
+    focus:ring-offset-2 focus:ring-offset-slate-50">
             ADD TO CART
           </Button>
         )}

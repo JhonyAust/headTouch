@@ -29,6 +29,10 @@ const allowedOrigins = [
     "http://localhost:5173",
     "https://headtouchbd.com",
     "https://www.headtouchbd.com", 
+    "https://www.facebook.com",
+    "https://l.messenger.com",
+    "https://m.facebook.com",
+    "https://lm.facebook.com",
 ];
 // Create HTTP server to attach Socket.IO
 const server = http.createServer(app);
@@ -50,18 +54,27 @@ mongoose.connect(process.env.MONGO)
 
 // Middleware
 app.use(
-    cors({
-        origin: allowedOrigins,
-        methods: ["GET", "POST", "DELETE", "PUT"],
-        allowedHeaders: [
-            "Content-Type",
-            "Authorization",
-            "Cache-Control",
-            "Expires",
-            "Pragma",
-        ],
-        credentials: true,
-    })
+     cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log("❌ Blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Cache-Control",
+      "Expires",
+      "Pragma",
+    ],
+    credentials: true,
+  })
 );
 
 app.use(cookieParser());
