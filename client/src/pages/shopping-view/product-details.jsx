@@ -260,13 +260,34 @@ const handleToggleWishlist = async () => {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 ">
                     <Button
-                      className="flex-1 text-black bg-ds_orange hover:bg-ds_orange_hover"
+                      className=" flex-1  text-[11px]
+    inline-flex items-center justify-center
+    rounded-md border border-transparent
+    bg-[linear-gradient(110deg,#EE751A_45%,#F5A05C_55%,#EE751A_100%)]
+    bg-[length:200%_100%]
+    animate-shimmer
+    font-medium text-white
+    transition-all
+    focus:outline-none focus:ring-2 focus:ring-orange-400
+    focus:ring-offset-2 focus:ring-offset-slate-50"
                       onClick={() => handleAddtoCart(productDetails._id)}
                     >
                       Add to Cart
                     </Button>
                     <Button
-                      className="flex-1 bg-[#1A73E8] hover:bg-[#1669d3] text-white"
+                  className="
+  flex-1 text-[11px]
+  inline-flex items-center justify-center
+  rounded-md border border-transparent
+  bg-[linear-gradient(110deg,#2563EB_0%,#EC4899_100%)]
+  font-medium text-white
+  transition-all duration-300
+  hover:opacity-90
+  focus:outline-none focus:ring-2 focus:ring-pink-400
+  focus:ring-offset-2 focus:ring-offset-slate-50
+"
+
+
                       onClick={() => handleBuyNow(productDetails._id)}
                     >
                       Buy Now

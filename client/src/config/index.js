@@ -100,26 +100,26 @@ export const shoppingViewHeaderMenuItems = [{
         label: "New Arrival",
         path: "/shop/listing",
     },
-    {
-        id: "limited",
-        label: "Limited Edition",
-        path: "/shop/listing",
-    },
+    // {
+    //     id: "limited",
+    //     label: "Limited Edition",
+    //     path: "/shop/listing",
+    // },
     {
         id: "best",
         label: "Best Selling",
         path: "/shop/listing",
     },
-    {
-        id: "premium",
-        label: "Premium Collections",
-        path: "/shop/listing",
-    },
-    {
-        id: "vintage",
-        label: "Vintage",
-        path: "/shop/listing",
-    },
+    // {
+    //     id: "premium",
+    //     label: "Premium Collections",
+    //     path: "/shop/listing",
+    // },
+    // {
+    //     id: "vintage",
+    //     label: "Vintage",
+    //     path: "/shop/listing",
+    // },
 
 ];
 
@@ -149,7 +149,7 @@ export const filterOptions = {
         { id: "vintage", label: "Vintage" },
         { id: "sport", label: "Sport Edition" },
     ],
-    
+
 };
 
 export const sortOptions = [

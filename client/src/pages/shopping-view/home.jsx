@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllFilteredProducts } from "@/store/shop/products-slice";
 import ShoppingProductTile from "@/components/shopping-view/product-tile";
@@ -9,8 +9,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { getFeatureImages } from "@/store/common-slice";
 import { addItem } from "@/store/shop/cart-slice-local";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react"; 
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 function ShoppingHome() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { featureImageList } = useSelector((state) => state.commonFeature);
@@ -22,7 +22,7 @@ function ShoppingHome() {
 
   const [featuredList, setFeaturedList] = useState([]);
   const [newArrivals, setNewArrivals] = useState([]);
-  const [premiumList, setPremiumList] = useState([]);
+  const [discountList, setDiscountList] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
@@ -35,13 +35,16 @@ function ShoppingHome() {
     dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "newest" }))
       .then((res) => res?.payload?.data && setNewArrivals(res.payload.data));
 
-    // Premium
-    dispatch(fetchAllFilteredProducts({ filterParams: { category: ["premium"] }, sortParams: "price-lowtohigh" }))
-      .then((res) => res?.payload?.data && setPremiumList(res.payload.data));
-
     // All Products
     dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "" }))
-      .then((res) => res?.payload?.data && setAllProducts(res.payload.data));
+      .then((res) => {
+        if (res?.payload?.data) {
+          setAllProducts(res.payload.data);
+          // Discount products where salePrice > 0
+          const discount = res.payload.data.filter((item) => item?.salePrice > 0);
+          setDiscountList(discount);
+        }
+      });
 
     dispatch(getFeatureImages());
   }, [dispatch]);
@@ -51,7 +54,7 @@ function ShoppingHome() {
       allProducts.find((p) => p._id === getCurrentProductId) ||
       featuredList.find((p) => p._id === getCurrentProductId) ||
       newArrivals.find((p) => p._id === getCurrentProductId) ||
-      premiumList.find((p) => p._id === getCurrentProductId);
+      discountList.find((p) => p._id === getCurrentProductId);
 
     if (!user) {
       dispatch(
@@ -104,8 +107,7 @@ function ShoppingHome() {
     <div className="flex flex-col min-h-screen mt-14 md:mt-0">
       {/* Banner */}
       <div className="relative w-full h-[200px] md:h-[500px] overflow-hidden">
-        {featureImageList &&
-          featureImageList.length > 0 &&
+        {featureImageList?.length > 0 &&
           featureImageList.map((slide, index) => (
             <img
               src={slide?.image}
@@ -122,7 +124,7 @@ function ShoppingHome() {
             <div
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${
+              className={`w-2 h-2 rounded-full cursor-pointer transition-all duration-300 ${
                 currentSlide === index ? "bg-ht_secondary scale-110" : "bg-gray-300"
               }`}
             ></div>
@@ -130,97 +132,98 @@ function ShoppingHome() {
         </div>
       </div>
 
-      <section className="py-4 sm:py-8 bg-gray-50">
+      {/* Feature Products (Desktop) */}
+      <section className="hidden md:block py-10 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
-          <h2 className="text-2xl sm:text-4xl mb-2 sm:mb-6">Explore Products</h2>
-
-          {/* Tabs */}
-          <div className="w-full flex justify-center ">
-            <Tabs defaultValue="featured" className="w-full ">
-              <div className="flex justify-center mb-4 sm:mb-8">
-                <TabsList className="flex w-full max-w-lg sm:max-w-2xl border border-gray-300 rounded-md overflow-hidden bg-white">
-                  {/* Featured */}
-                  <TabsTrigger
-                    value="featured"
-                    className="relative flex-1 px-6 py-4 text-center text-sm sm:text-base font-medium
-                      border-r border-gray-300 last:border-r-0 bg-white
-                      after:content-[''] after:absolute after:left-0 after:right-0 after:bottom-0
-                      after:h-3 after:sm:h-4 after:hidden after:rounded-b-md
-                      data-[state=active]:after:block data-[state=active]:after:bg-ds_orange
-                      data-[state=active]:text-ds_orange data-[state=active]:font-semibold data-[state=active]:text-base data-[state=active]:sm:text-lg"
-                  >
-                    Featured
-                  </TabsTrigger>
-
-                  {/* New Arrivals */}
-                  <TabsTrigger
-                    value="new"
-                    className="relative flex-1 px-6 py-4 text-center text-sm sm:text-base font-medium
-                      border-r border-gray-300 last:border-r-0 bg-white
-                      after:content-[''] after:absolute after:left-0 after:right-0 after:bottom-0
-                      after:h-3 after:sm:h-4 after:hidden after:rounded-b-md
-                      data-[state=active]:after:block data-[state=active]:after:bg-ds_orange
-                      data-[state=active]:text-ds_orange data-[state=active]:font-semibold data-[state=active]:text-base data-[state=active]:sm:text-lg"
-                  >
-                    New Arrivals
-                  </TabsTrigger>
-
-                  {/* Premium */}
-                  <TabsTrigger
-                    value="premium"
-                    className="relative flex-1 px-6 py-4 text-center text-sm sm:text-base font-medium
-                      bg-white
-                      after:content-[''] after:absolute after:left-0 after:right-0 after:bottom-0
-                      after:h-3 after:sm:h-4 after:hidden after:rounded-b-md
-                      data-[state=active]:after:block data-[state=active]:after:bg-ds_orange
-                      data-[state=active]:text-ds_orange data-[state=active]:font-semibold data-[state=active]:text-base data-[state=active]:sm:text-lg"
-                  >
-                    Premium
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-
-              {/* Tabs Content */}
-              <TabsContent value="featured">
-                <HorizontalScroll
-                  products={featuredList}
-                  handleNavigateToProductDetails={handleNavigateToProductDetails}
-                  handleAddtoCart={handleAddtoCart}
-                  emptyMessage="No featured products available."
-                />
-              </TabsContent>
-
-              <TabsContent value="new">
-                <HorizontalScroll
-                  products={newArrivals}
-                  handleNavigateToProductDetails={handleNavigateToProductDetails}
-                  handleAddtoCart={handleAddtoCart}
-                  emptyMessage="No new arrivals found."
-                />
-              </TabsContent>
-
-              <TabsContent value="premium">
-                <HorizontalScroll
-                  products={premiumList}
-                  handleNavigateToProductDetails={handleNavigateToProductDetails}
-                  handleAddtoCart={handleAddtoCart}
-                  emptyMessage="No premium products available."
-                />
-              </TabsContent>
-            </Tabs>
-          </div>
+          <h2 className="text-3xl sm:text-4xl mb-6  text-ht_secondary">
+            Feature Products
+          </h2>
+          <HorizontalScroll
+            products={featuredList}
+            handleNavigateToProductDetails={handleNavigateToProductDetails}
+            handleAddtoCart={handleAddtoCart}
+            emptyMessage="No featured products available."
+          />
         </div>
       </section>
 
+      {/* Tabs (Mobile) */}
+<section className=" sm:hidden">
+  <div className="container mx-auto px-0 ">
+    <Tabs defaultValue="features" className="w-full">
+      {/* Tabs Header */}
+      <TabsList className="flex w-full  bg-[#1A1A1A] overflow-hidden !rounded-none">
+        <TabsTrigger
+          value="features"
+          className="flex-1 py-3 text-center text-sm font-semibold text-[#FFD700] transition-all
+          hover:bg-[#2B2B2B] hover:text-white 
+          data-[state=active]:bg-[#333333] data-[state=active]:text-white"
+        >
+          Features
+        </TabsTrigger>
+
+        <TabsTrigger
+          value="new"
+          className="flex-1 py-3 text-center text-sm font-semibold text-[#00D8FF] transition-all
+          hover:bg-[#2B2B2B] hover:text-white 
+          data-[state=active]:bg-[#333333] data-[state=active]:text-white"
+        >
+          New Arrival
+        </TabsTrigger>
+
+        <TabsTrigger
+          value="discount"
+          className="flex-1 py-3 text-center text-sm font-semibold text-[#FF6B6B] transition-all
+          hover:bg-[#2B2B2B] hover:text-white 
+          data-[state=active]:bg-[#333333] data-[state=active]:text-white"
+        >
+          Discount
+        </TabsTrigger>
+      </TabsList>
+
+      {/* Tabs Body */}
+      <div className="bg-white mt-4 rounded-xl shadow-sm">
+        <TabsContent value="features">
+          <HorizontalScroll
+            products={featuredList}
+            handleNavigateToProductDetails={handleNavigateToProductDetails}
+            handleAddtoCart={handleAddtoCart}
+            emptyMessage="No features available."
+          />
+        </TabsContent>
+
+        <TabsContent value="new">
+          <HorizontalScroll
+            products={newArrivals}
+            handleNavigateToProductDetails={handleNavigateToProductDetails}
+            handleAddtoCart={handleAddtoCart}
+            emptyMessage="No new arrivals found."
+          />
+        </TabsContent>
+
+        <TabsContent value="discount">
+          <HorizontalScroll
+            products={discountList}
+            handleNavigateToProductDetails={handleNavigateToProductDetails}
+            handleAddtoCart={handleAddtoCart}
+            emptyMessage="No discount products available."
+          />
+        </TabsContent>
+      </div>
+    </Tabs>
+  </div>
+</section>
 
 
       {/* All Products */}
-      <section className="py-4 sm:py-8 bg-white">
+      <section className="py-8 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
-          <h2 className="text-2xl sm:text-4xl mb-2 sm:mb-8">All Products</h2>
+          <h2 className="text-3xl sm:text-4xl mb-6  text-ht_secondary">
+            All Products
+          </h2>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {allProducts && allProducts.length > 0 ? (
+            {allProducts?.length > 0 ? (
               (showAll ? allProducts : allProducts.slice(0, 12)).map((productItem) => (
                 <ShoppingProductTile
                   key={productItem._id}
@@ -230,9 +233,7 @@ function ShoppingHome() {
                 />
               ))
             ) : (
-              <p className="col-span-full text-center text-gray-500">
-                No products found.
-              </p>
+              <p className="col-span-full text-center text-gray-500">No products found.</p>
             )}
           </div>
 
@@ -275,7 +276,7 @@ function HorizontalScroll({ products, handleNavigateToProductDetails, handleAddt
         className="flex overflow-x-auto gap-4 scrollbar-hide scroll-smooth px-2"
         style={{ scrollbarWidth: "none" }}
       >
-        {products && products.length > 0 ? (
+        {products?.length > 0 ? (
           products.map((productItem) => (
             <div key={productItem._id} className="w-1/2 sm:w-auto sm:min-w-[250px] shrink-0">
               <ShoppingProductTile
@@ -292,6 +293,5 @@ function HorizontalScroll({ products, handleNavigateToProductDetails, handleAddt
     </div>
   );
 }
-
 
 export default ShoppingHome;
