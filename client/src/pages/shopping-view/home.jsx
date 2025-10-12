@@ -261,7 +261,7 @@ function ShoppingHome() {
       </section>
 
       {/* All Products Section */}
-      <section className="py-16 bg-white relative">
+      <section className="py-4 sm:py-16 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
           <div className="flex items-center justify-between mb-10">
             <div>

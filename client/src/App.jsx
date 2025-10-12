@@ -39,6 +39,7 @@ import LoadingScreen from "./components/common/LoadingScreen";
 import AboutUs from "./pages/shopping-view/about-us";
 import ContactUs from "./pages/shopping-view/contact-us";
 import AdminCouponsView from "./pages/admin-view/admin-coupon-view";
+import TermsAndConditions from "./pages/shopping-view/terms";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -72,7 +73,7 @@ useEffect(() => {
     }
   }, [isAuthenticated, user, navigate, location.pathname]);
 
-  if (isLoading) return <LoadingScreen />; 
+  // if (isLoading) return <LoadingScreen />; 
 
   console.log(isLoading, user);
 
@@ -110,6 +111,7 @@ useEffect(() => {
           <Route path="product/:category/:slug" element={<ProductDetails />} />
           <Route path="search" element={<SearchProducts />} />
           <Route path="wishlist" element={<Wishlist />} />
+          <Route path="terms" element={<TermsAndConditions />} />
           <Route path="about" element={<AboutUs />} />
           <Route path="contact" element={<ContactUs />} />
 

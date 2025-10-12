@@ -195,7 +195,7 @@ const handleToggleWishlist = async () => {
 
   return (
     <div className="container mx-auto px-6 py-10 mt-12 sm:mt-0">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <div className="border overflow-hidden rounded mb-3">
             <ProductMagnifier src={selectedImage} zoom={2.5} />
