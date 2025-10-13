@@ -255,7 +255,7 @@ function ProductDetails() {
               </div>
 
               {/* Title */}
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
                 {productDetails.title}
               </h1>
 
@@ -275,7 +275,7 @@ function ProductDetails() {
                   {productDetails.salePrice > 0 ? (
                     <>
                       <div className="flex flex-col">
-                        <span className="text-3xl md:text-4xl font-bold text-gray-900">
+                        <span className="text-xl md:text-2xl font-bold text-gray-900">
                           ৳{productDetails.salePrice}
                         </span>
                         <span className="text-lg text-gray-500 line-through">
@@ -343,7 +343,7 @@ function ProductDetails() {
               {productDetails.totalStock > 0 && (
                 <div className="space-y-3 mb-6">
                   <Button
-                    className="w-full h-14 text-base font-bold
+                    className="w-full h-10 text-base 
                     inline-flex items-center justify-center gap-2
                     rounded-xl border border-transparent
                     bg-[linear-gradient(110deg,#EE751A_45%,#F5A05C_55%,#EE751A_100%)]
@@ -355,12 +355,12 @@ function ProductDetails() {
                     focus:outline-none focus:ring-2 focus:ring-orange-400"
                     onClick={() => handleAddtoCart(productDetails._id)}
                   >
-                    <ShoppingCart className="w-5 h-5" />
+                    <ShoppingCart className="w-3 h-3" />
                     Add to Cart
                   </Button>
 
                   <Button
-                    className="w-full h-14 text-base font-bold
+                    className="w-full h-10 text-base 
                     inline-flex items-center justify-center gap-2
                     rounded-xl border border-transparent
                     bg-gradient-to-r from-blue-600 to-purple-600
@@ -370,7 +370,7 @@ function ProductDetails() {
                     focus:outline-none focus:ring-2 focus:ring-purple-400"
                     onClick={() => handleBuyNow(productDetails._id)}
                   >
-                    <Zap className="w-5 h-5" />
+                    <Zap className="w-3 h-3" />
                     Buy Now
                   </Button>
                 </div>
