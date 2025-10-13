@@ -44,7 +44,7 @@ function Subheader() {
   }
 
   return (
-    <div className="bg-white border-t border-gray-200 shadow-md hidden sm:flex items-center justify-between px-6 py-3 mt-14 sm:mt-16 relative overflow-hidden">
+    <div className="bg-white border-t border-gray-200 shadow-md hidden sm:flex items-center justify-between px-6 py-3 mt-14 sm:mt-16 relative overflow-hidden z-10">
      
     
       

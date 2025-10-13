@@ -287,7 +287,7 @@ function ProductDetails() {
                       </span>
                     </>
                   ) : (
-                    <span className="text-3xl md:text-4xl font-bold text-gray-900">
+                    <span className="text-2xl md:text-3xl font-bold text-gray-900">
                       ৳{productDetails.price}
                     </span>
                   )}
@@ -315,12 +315,12 @@ function ProductDetails() {
                   <Label className="text-base font-semibold text-gray-900 mb-3 block">
                     Quantity
                   </Label>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1">
                     <Button 
                       variant="outline" 
                       size="icon" 
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      className="w-12 h-12 rounded-full border-2 hover:border-purple-400 hover:bg-purple-50"
+                      className="w-10 h-10 rounded-full border-2 hover:border-purple-400 hover:bg-purple-50"
                     >
                       <span className="text-xl">-</span>
                     </Button>
@@ -331,7 +331,7 @@ function ProductDetails() {
                       variant="outline" 
                       size="icon" 
                       onClick={() => setQuantity((q) => q + 1)}
-                      className="w-12 h-12 rounded-full border-2 hover:border-purple-400 hover:bg-purple-50"
+                      className="w-10 h-10 rounded-full border-2 hover:border-purple-400 hover:bg-purple-50"
                     >
                       <span className="text-xl">+</span>
                     </Button>
