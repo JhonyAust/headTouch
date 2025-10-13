@@ -15,22 +15,28 @@ function AdminFeatures() {
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const dispatch = useDispatch();
   const { featureImageList } = useSelector((state) => state.commonFeature);
+const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
 
   useEffect(() => {
     dispatch(getFeatureImages());
   }, [dispatch]);
 
   function handleUploadFeatureImage() {
-    if (!uploadedImageUrl) return;
+  if (!uploadedImageUrls || uploadedImageUrls.length === 0) return;
 
-    dispatch(addFeatureImage(uploadedImageUrl)).then((data) => {
+  // upload all URLs
+  uploadedImageUrls.forEach((url) => {
+    dispatch(addFeatureImage(url)).then((data) => {
       if (data?.payload?.success) {
         dispatch(getFeatureImages());
-        setImageFile(null);
-        setUploadedImageUrl("");
       }
     });
-  }
+  });
+
+  // reset
+  setUploadedImageUrls([]);
+}
+
 
   function handleDeleteFeatureImage(id) {
     const confirmDelete = window.confirm("Are you sure you want to delete this image?");
@@ -45,15 +51,12 @@ function AdminFeatures() {
 
   return (
     <div>
-      <ProductImageUpload
-        imageFile={imageFile}
-        setImageFile={setImageFile}
-        uploadedImageUrl={uploadedImageUrl}
-        setUploadedImageUrl={setUploadedImageUrl}
-        setImageLoadingState={setImageLoadingState}
-        imageLoadingState={imageLoadingState}
-        isCustomStyling={true}
-      />
+     <ProductImageUpload
+  uploadedImageUrls={uploadedImageUrls}
+  setUploadedImageUrls={setUploadedImageUrls}
+/>
+
+
       <Button onClick={handleUploadFeatureImage} className="mt-5 w-full">
         Upload
       </Button>

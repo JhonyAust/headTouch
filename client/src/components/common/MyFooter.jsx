@@ -39,7 +39,7 @@ export default function Footer() {
     "text-gray-600 hover:text-purple-600 hover:translate-x-1 inline-block transition-all duration-300";
 
   return (
-    <footer className="bg-white py-12 px-6 mb-16 md:mb-0 -mt-40 relative overflow-hidden">
+    <footer className="bg-white py-12 px-0 sm:px-6 mb-16 md:mb-0 -mt-40 relative overflow-hidden">
       {/* Decorative gradient line at top */}
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-gray-200 mt-4"></div>
       

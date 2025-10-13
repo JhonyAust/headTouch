@@ -156,7 +156,7 @@ function ShoppingHome() {
       </div>
 
       {/* Featured Products Section (Desktop) */}
-      <section className="hidden md:block py-16 bg-white relative overflow-hidden">
+      <section className="hidden md:block py-4 bg-white relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
@@ -166,7 +166,7 @@ function ShoppingHome() {
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
-          <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center justify-between mb-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-1 h-8 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
@@ -261,7 +261,7 @@ function ShoppingHome() {
       </section>
 
       {/* All Products Section */}
-      <section className="py-4 sm:py-16 bg-white relative">
+      <section className="py-4 sm:py-4 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
           <div className="flex items-center justify-between mb-10">
             <div>
@@ -278,7 +278,7 @@ function ShoppingHome() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {allProducts?.length > 0 ? (
-              (showAll ? allProducts : allProducts.slice(0, 12)).map((productItem, index) => (
+              (showAll ? allProducts : allProducts.slice(0, 8)).map((productItem, index) => (
                 <div 
                   key={productItem._id}
                   className="animate-fade-in-up"
@@ -299,7 +299,7 @@ function ShoppingHome() {
             )}
           </div>
 
-          {allProducts.length > 12 && !showAll && (
+          {allProducts.length > 7 && !showAll && (
             <div className="flex justify-center mt-12">
               <Button 
                 onClick={() => setShowAll(true)}
@@ -370,7 +370,7 @@ function HorizontalScroll({ products, handleNavigateToProductDetails, handleAddt
   }, [products]);
 
   return (
-    <div className="relative group">
+    <div className="relative ">
       {/* Left Navigation Button */}
       {canScrollLeft && (
         <button
