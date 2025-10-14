@@ -90,7 +90,7 @@ function Header() {
               onClick={() => setOpenMenuSheet(true)}
               className="hover:bg-purple-50 hover:scale-110 transition-all duration-300 rounded-full relative group"
             >
-              <Menu className="h-6 w-6 text-purple-600 group-hover:rotate-180 transition-transform duration-500" />
+              <Menu className="h-6 w-6 text-orange-500 group-hover:rotate-180 transition-transform duration-500" />
             </Button>
 
             <SheetContent side="left" className="w-[280px] bg-gradient-to-br from-white to-purple-50/30">
@@ -196,9 +196,9 @@ function Header() {
             className="p-2 rounded-full hover:bg-purple-50 hover:scale-110 transition-all duration-300"
           >
             {mobileSearchOpen ? (
-              <X className="text-purple-600 w-5 h-5" />
+              <X className="text-orange-500 w-5 h-5" />
             ) : (
-              <Search className="text-purple-600 w-5 h-5" />
+              <Search className="text-orange-500 w-5 h-5" />
             )}
           </button>
         </div>

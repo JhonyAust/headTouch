@@ -20,7 +20,7 @@ const shopSearchRouter = require("./routes/shop/search-routes");
 const shopReviewRouter = require("./routes/shop/review-routes");
 const commonFeatureRouter = require("./routes/common/feature-routes");
 const wishlistRoutes = require("./routes/shop/wishlist-routes");
-const couponRoutes  = require("./routes/admin/coupon-routes");
+const couponRoutes = require("./routes/admin/coupon-routes");
 
 
 const app = express();
@@ -28,7 +28,7 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
     "http://localhost:5173",
     "https://headtouchbd.com",
-    "https://www.headtouchbd.com", 
+    "https://www.headtouchbd.com",
     "https://www.facebook.com",
     "https://l.messenger.com",
     "https://m.facebook.com",
@@ -44,8 +44,7 @@ const io = new Server(server, {
     },
 });
 
-// Store the socket.io instance in app.locals for access in routes
-app.locals.io = io;
+
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO)
@@ -54,27 +53,27 @@ mongoose.connect(process.env.MONGO)
 
 // Middleware
 app.use(
-     cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps, server-to-server)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.log("❌ Blocked by CORS:", origin);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "DELETE", "PUT"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Cache-Control",
-      "Expires",
-      "Pragma",
-    ],
-    credentials: true,
-  })
+    cors({
+        origin: function(origin, callback) {
+            // Allow requests with no origin (like mobile apps, server-to-server)
+            if (!origin) return callback(null, true);
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                console.log("❌ Blocked by CORS:", origin);
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+        methods: ["GET", "POST", "DELETE", "PUT"],
+        allowedHeaders: [
+            "Content-Type",
+            "Authorization",
+            "Cache-Control",
+            "Expires",
+            "Pragma",
+        ],
+        credentials: true,
+    })
 );
 
 app.use(cookieParser());
