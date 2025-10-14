@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
-import { brandOptionsMap, categoryOptionsMap } from "@/config";
 import { Badge } from "../ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ShoppingCart } from "lucide-react";
@@ -10,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { toggleLocalWishlistItem } from "@/store/shop/wishlist-slice-local";
 import { toggleWishlistItem } from "@/store/shop/wishlist-slice";
 import HeartToggle from "./HeartToggle";
-
+import { categoryOptionsMap } from "@/config";
 function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart }) {
   const [quantity, setQuantity] = useState(1);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -73,7 +72,7 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
 
   return (
     <Card 
-      className="group relative flex flex-col h-full w-full overflow-hidden bg-white hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-purple-200 cursor-pointer"
+      className="group relative flex flex-col h-full w-full overflow-hidden bg-white hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-purple-200 cursor-pointer hover:-translate-y-1"
       onClick={handleCardClick}
     >
       {/* Heart Toggle Button */}
@@ -122,20 +121,20 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
       </div>
 
       {/* Content Container - Flex Grow */}
-      <CardContent className="flex-grow flex flex-col p-3 sm:p-4 space-y-3">
+      <CardContent className="flex-grow flex flex-col p-2 sm:p-3 space-y-2">
         {/* Title - Fixed Height with Line Clamp */}
-        <h2 className="text-sm sm:text-base font-semibold text-gray-900 line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem] leading-tight">
+        <h2 className="text-sm sm:text-base font-semibold text-gray-900 line-clamp-2 min-h-[1.5rem] sm:min-h-[2rem] leading-tight truncate">
           {product?.title}
         </h2>
 
         {/* Spacer */}
-        <div className="flex-grow" />
+        {/* <div className="flex-grow" /> */}
 
         {/* Price Section */}
         <div className="flex items-end gap-2">
           {product?.salePrice > 0 ? (
             <>
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-0">
                 <span className="text-lg sm:text-xl font-bold text-gray-900">
                   ৳{product?.salePrice}
                 </span>
@@ -156,7 +155,7 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
       </CardContent>
 
       {/* Footer - Fixed Height */}
-      <CardFooter className="p-3 sm:p-4 pt-0">
+      <CardFooter className="p-3 sm:p-4 pt-1">
         {product?.totalStock === 0 ? (
           <Button 
             disabled

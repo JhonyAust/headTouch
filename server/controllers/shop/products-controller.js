@@ -19,22 +19,34 @@ const getFilteredProducts = async(req, res) => {
         switch (sortBy) {
             case "price-lowtohigh":
                 sort.price = 1;
-
                 break;
             case "price-hightolow":
                 sort.price = -1;
-
                 break;
             case "title-atoz":
                 sort.title = 1;
-
                 break;
-
             case "title-ztoa":
                 sort.title = -1;
-
                 break;
-
+            case "newest":
+                sort.createdAt = -1; // Sort by creation date, newest first
+                break;
+            case "bestseller":
+                // Filter products by "Best seller" category
+                filters.category = "best";
+                sort.createdAt = -1;
+                break;
+            case "newarrival":
+                // Filter products by "New arrival" category
+                filters.category = "new";
+                sort.createdAt = -1;
+                break;
+            case "limited":
+                // Filter products by "limited" category
+                filters.category = "limited";
+                sort.createdAt = -1;
+                break;
             default:
                 sort.price = 1;
                 break;

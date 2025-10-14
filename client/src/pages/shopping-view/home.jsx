@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getFeatureImages } from "@/store/common-slice";
 import { addItem } from "@/store/shop/cart-slice-local";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ChevronLeft, ChevronRight, Sparkles, TrendingUp, Tag, Star, Zap, ShoppingBag } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, TrendingUp, Tag, Star, Zap, ShoppingBag, Trophy, Clock } from "lucide-react";
 
 function ShoppingHome() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -20,7 +20,7 @@ function ShoppingHome() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const [featuredList, setFeaturedList] = useState([]);
+  const [bestSellerList, setBestSellerList] = useState([]);
   const [newArrivals, setNewArrivals] = useState([]);
   const [discountList, setDiscountList] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
@@ -30,21 +30,29 @@ function ShoppingHome() {
   useEffect(() => {
     setIsVisible(true);
     
-    // Featured
-    dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "price-lowtohigh" }))
-      .then((res) => res?.payload?.data && setFeaturedList(res.payload.data));
+    // Best Sellers (Products with category "Best seller")
+    dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "bestseller" }))
+      .then((res) => {
+        if (res?.payload?.data) {
+          setBestSellerList(res.payload.data.slice(0, 10));
+        }
+      });
 
-    // New Arrivals
+    // New Arrivals (Products with category "New arrival")
+    dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "newarrival" }))
+      .then((res) => {
+        if (res?.payload?.data) {
+          setNewArrivals(res.payload.data.slice(0, 10));
+        }
+      });
+
+    // All Products (sorted by newest first)
     dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "newest" }))
-      .then((res) => res?.payload?.data && setNewArrivals(res.payload.data));
-
-    // All Products
-    dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "" }))
       .then((res) => {
         if (res?.payload?.data) {
           setAllProducts(res.payload.data);
           const discount = res.payload.data.filter((item) => item?.salePrice > 0);
-          setDiscountList(discount);
+          setDiscountList(discount.slice(0, 10));
         }
       });
 
@@ -54,7 +62,7 @@ function ShoppingHome() {
   function handleAddtoCart(getCurrentProductId, quantity) {
     const product =
       allProducts.find((p) => p._id === getCurrentProductId) ||
-      featuredList.find((p) => p._id === getCurrentProductId) ||
+      bestSellerList.find((p) => p._id === getCurrentProductId) ||
       newArrivals.find((p) => p._id === getCurrentProductId) ||
       discountList.find((p) => p._id === getCurrentProductId);
 
@@ -152,15 +160,16 @@ function ShoppingHome() {
             />
           ))}
         </div>
-
       </div>
 
-      {/* Featured Products Section (Desktop) */}
-      <section className="hidden md:block py-4 bg-white relative overflow-hidden">
+      
+
+      {/* New Arrivals Section (Desktop) */}
+      <section className="hidden md:block py-4 mt-4 bg-white relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, #9333ea 1px, transparent 0)',
+            backgroundImage: 'radial-gradient(circle at 2px 2px, #3b82f6 1px, transparent 0)',
             backgroundSize: '40px 40px'
           }}></div>
         </div>
@@ -169,28 +178,68 @@ function ShoppingHome() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-1 h-8 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
-                <Star className="w-6 h-6 text-purple-600" />
-                <span className="text-sm font-semibold text-purple-600 uppercase tracking-wider">Premium Selection</span>
+                <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
+                <Clock className="w-6 h-6 text-blue-600" />
+                <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">Just Arrived</span>
               </div>
-              <h2 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-purple-900 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Featured Products
+              <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-900 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                New Arrivals
               </h2>
             </div>
             <Button 
-              onClick={() => navigate("/shop/listing")}
+              onClick={() => navigate("/shop/listing?category=new")}
               variant="outline" 
-              className="hidden lg:flex items-center gap-2 border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50"
+              className="hidden lg:flex items-center gap-2 border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50"
             >
               View All
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
           <HorizontalScroll
-            products={featuredList}
+            products={newArrivals}
             handleNavigateToProductDetails={handleNavigateToProductDetails}
             handleAddtoCart={handleAddtoCart}
-            emptyMessage="No featured products available."
+            emptyMessage="No new arrivals available."
+          />
+        </div>
+      </section>
+
+{/* Best Sellers Section (Desktop) */}
+      <section className="hidden md:block py-4 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, #f59e0b 1px, transparent 0)',
+            backgroundSize: '40px 40px'
+          }}></div>
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-1 h-8 bg-gradient-to-b from-amber-600 to-orange-600 rounded-full"></div>
+                <Trophy className="w-6 h-6 text-amber-600" />
+                <span className="text-sm font-semibold text-amber-600 uppercase tracking-wider">Top Picks</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-amber-900 via-amber-600 to-orange-600 bg-clip-text text-transparent">
+                Best Sellers
+              </h2>
+            </div>
+            <Button 
+              onClick={() => navigate("/shop/listing?category=best")}
+              variant="outline" 
+              className="hidden lg:flex items-center gap-2 border-2 border-amber-200 hover:border-amber-400 hover:bg-amber-50"
+            >
+              View All
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+          <HorizontalScroll
+            products={bestSellerList}
+            handleNavigateToProductDetails={handleNavigateToProductDetails}
+            handleAddtoCart={handleAddtoCart}
+            emptyMessage="No best sellers available."
           />
         </div>
       </section>
@@ -198,43 +247,46 @@ function ShoppingHome() {
       {/* Mobile Tabs */}
       <section className="md:hidden">
         <div className="container mx-auto px-0">
-          <Tabs defaultValue="features" className="w-full">
-            <TabsList className="flex w-full bg-[#1A1A1A] overflow-hidden !rounded-none">
-              <TabsTrigger
-                value="features"
-                className="flex-1 py-3 text-center text-sm font-semibold text-[#FFD700] transition-all
-                hover:bg-[#2B2B2B] hover:text-white 
-                data-[state=active]:bg-[#333333] data-[state=active]:text-white"
-              >
-                Features
-              </TabsTrigger>
+          <Tabs defaultValue="bestseller" className="w-full">
+            <TabsList className="flex w-full bg-gradient-to-r from-slate-800 to-slate-900 overflow-hidden !rounded-none shadow-lg">
+             
 
               <TabsTrigger
                 value="new"
-                className="flex-1 py-3 text-center text-sm font-semibold text-[#00D8FF] transition-all
-                hover:bg-[#2B2B2B] hover:text-white 
-                data-[state=active]:bg-[#333333] data-[state=active]:text-white"
+                className="flex-1 py-3 text-center text-sm font-semibold text-blue-400 transition-all
+                hover:bg-slate-700 hover:text-white 
+                data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white"
               >
+                <Clock className="w-4 h-4 inline mr-1" />
                 New Arrival
               </TabsTrigger>
-
+              <TabsTrigger
+                value="bestseller"
+                className="flex-1 py-3 text-center text-sm font-semibold text-amber-400 transition-all
+                hover:bg-slate-700 hover:text-white 
+                data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-600 data-[state=active]:to-orange-600 data-[state=active]:text-white"
+              >
+                <Trophy className="w-4 h-4 inline mr-1" />
+                Best Sellers
+              </TabsTrigger>
               <TabsTrigger
                 value="discount"
-                className="flex-1 py-3 text-center text-sm font-semibold text-[#FF6B6B] transition-all
-                hover:bg-[#2B2B2B] hover:text-white 
-                data-[state=active]:bg-[#333333] data-[state=active]:text-white"
+                className="flex-1 py-3 text-center text-sm font-semibold text-rose-400 transition-all
+                hover:bg-slate-700 hover:text-white 
+                data-[state=active]:bg-gradient-to-r data-[state=active]:from-rose-600 data-[state=active]:to-pink-600 data-[state=active]:text-white"
               >
+                <Tag className="w-4 h-4 inline mr-1" />
                 Discount
               </TabsTrigger>
             </TabsList>
 
             <div className="bg-white mt-4 rounded-xl shadow-sm px-4">
-              <TabsContent value="features" className="mt-0">
+              <TabsContent value="bestseller" className="mt-0">
                 <HorizontalScroll
-                  products={featuredList}
+                  products={bestSellerList}
                   handleNavigateToProductDetails={handleNavigateToProductDetails}
                   handleAddtoCart={handleAddtoCart}
-                  emptyMessage="No features available."
+                  emptyMessage="No best sellers available."
                 />
               </TabsContent>
 
@@ -260,17 +312,17 @@ function ShoppingHome() {
         </div>
       </section>
 
-      {/* All Products Section */}
+      {/* All Products Section (Newest First) */}
       <section className="py-4 sm:py-4 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
           <div className="flex items-center justify-between mb-10">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-cyan-600 rounded-full"></div>
-                <ShoppingBag className="w-6 h-6 text-blue-600" />
-                <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">Explore More</span>
+                <div className="w-1 h-8 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
+                <ShoppingBag className="w-6 h-6 text-purple-600" />
+                <span className="text-sm font-semibold text-purple-600 uppercase tracking-wider">Complete Collection</span>
               </div>
-              <h2 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-900 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-900 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                 All Products
               </h2>
             </div>
@@ -299,13 +351,16 @@ function ShoppingHome() {
             )}
           </div>
 
-          {allProducts.length > 7 && !showAll && (
+          {allProducts.length > 8 && !showAll && (
             <div className="flex justify-center mt-12">
               <Button 
                 onClick={() => setShowAll(true)}
-                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
               >
-                Load More Products
+                <span className="flex items-center gap-2">
+                  Load More Products
+                  <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                </span>
               </Button>
             </div>
           )}
@@ -349,8 +404,10 @@ function ShoppingHome() {
 /* Enhanced Horizontal Scroll Component */
 function HorizontalScroll({ products, handleNavigateToProductDetails, handleAddtoCart, emptyMessage }) {
   const scrollRef = useRef(null);
+  const containerRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [showArrows, setShowArrows] = useState(false);
 
   const checkScroll = () => {
     if (scrollRef.current) {
@@ -370,12 +427,19 @@ function HorizontalScroll({ products, handleNavigateToProductDetails, handleAddt
   }, [products]);
 
   return (
-    <div className="relative ">
+    <div 
+      ref={containerRef}
+      className="relative"
+      onMouseEnter={() => setShowArrows(true)}
+      onMouseLeave={() => setShowArrows(false)}
+    >
       {/* Left Navigation Button */}
       {canScrollLeft && (
         <button
           onClick={() => scrollRef.current.scrollBy({ left: -350, behavior: "smooth" })}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white shadow-xl hover:shadow-2xl border border-gray-100 transition-all duration-300 hover:scale-110 opacity-0 group-hover:opacity-100"
+          className={`hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white shadow-xl hover:shadow-2xl border border-gray-100 transition-all duration-300 hover:scale-110 ${
+            showArrows ? 'opacity-100' : 'opacity-0'
+          }`}
         >
           <ChevronLeft className="w-6 h-6 text-gray-700" />
         </button>
@@ -385,7 +449,9 @@ function HorizontalScroll({ products, handleNavigateToProductDetails, handleAddt
       {canScrollRight && (
         <button
           onClick={() => scrollRef.current.scrollBy({ left: 350, behavior: "smooth" })}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white shadow-xl hover:shadow-2xl border border-gray-100 transition-all duration-300 hover:scale-110 opacity-0 group-hover:opacity-100"
+          className={`hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white shadow-xl hover:shadow-2xl border border-gray-100 transition-all duration-300 hover:scale-110 ${
+            showArrows ? 'opacity-100' : 'opacity-0'
+          }`}
         >
           <ChevronRight className="w-6 h-6 text-gray-700" />
         </button>

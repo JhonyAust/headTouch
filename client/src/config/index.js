@@ -59,8 +59,8 @@ export const addProductFormElements = [{
             { id: "new", label: "New Arrival" },
             { id: "limited", label: "Limited Edition" },
             { id: "best", label: "Best Selling" },
-            { id: "premium", label: "Premium Collections" },
-            { id: "vintage", label: "Vintage" },
+            // { id: "premium", label: "Premium Collections" },
+            // { id: "vintage", label: "Vintage" },
         ],
     },
 
@@ -127,27 +127,27 @@ export const categoryOptionsMap = {
     new: "New Arrival",
     limited: "Limited Edition",
     best: "Best Selling",
-    premium: "Premium Collections",
-    vintage: "Vintage",
+    // premium: "Premium Collections",
+    // vintage: "Vintage",
 };
 
-export const brandOptionsMap = {
-    nike: "Nike",
-    adidas: "Adidas",
-    puma: "Puma",
-    levi: "Levi",
-    zara: "Zara",
-    "h&m": "H&M",
-};
+// export const brandOptionsMap = {
+//     nike: "Nike",
+//     adidas: "Adidas",
+//     puma: "Puma",
+//     levi: "Levi",
+//     zara: "Zara",
+//     "h&m": "H&M",
+// };
 
 export const filterOptions = {
     category: [
         { id: "new", label: "New Arrival" },
         { id: "limited", label: "Limited Edition" },
         { id: "best", label: "Best Selling" },
-        { id: "premium", label: "Premium Collections" },
-        { id: "vintage", label: "Vintage" },
-        { id: "sport", label: "Sport Edition" },
+        //{ id: "premium", label: "Premium Collections" },
+        // { id: "vintage", label: "Vintage" },
+        // { id: "sport", label: "Sport Edition" },
     ],
 
 };

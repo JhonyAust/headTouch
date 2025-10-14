@@ -394,18 +394,18 @@ function Checkout() {
                       <Tag className="w-4 h-4 text-amber-600" />
                       <label className="font-medium text-gray-900 text-sm">Have a Coupon?</label>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full">
                       <input
                         type="text"
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-amber-200 rounded-lg focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none transition-all text-sm"
+                        className="flex-1 px-2 sm:px-3 py-2 border border-amber-200 rounded-lg focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none transition-all text-sm w-full"
                         placeholder="Enter code"
                       />
                       {!appliedCoupon ? (
                         <Button
                           onClick={handleApplyCoupon}
-                          className="bg-amber-600 hover:bg-amber-700 text-white px-4 text-sm font-medium"
+                          className="bg-amber-600 hover:bg-amber-700 text-white px-2 sm:px-4 text-sm font-medium w-full sm:w-auto"
                         >
                           Apply
                         </Button>
@@ -413,12 +413,13 @@ function Checkout() {
                         <Button
                           onClick={handleRemoveCoupon}
                           variant="destructive"
-                          className="px-4 text-sm"
+                          className="px-4 text-sm w-full sm:w-auto"
                         >
                           Remove
                         </Button>
                       )}
                     </div>
+
                     {error && (
                       <p className="text-red-600 text-sm mt-2 flex items-center gap-1">
                         <span>⚠️</span> {error}

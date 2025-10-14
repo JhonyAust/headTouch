@@ -24,7 +24,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { toggleLocalWishlistItem } from "@/store/shop/wishlist-slice-local";
 import { toggleWishlistItem } from "@/store/shop/wishlist-slice";
 
-import { brandOptionsMap, categoryOptionsMap } from "@/config";
+import {  categoryOptionsMap } from "@/config";
 import { openLoginPopup } from "@/store/loginRegister-slice";
 
 import ProductThumbnails from "@/components/shopping-view/ProductThumbnails";
