@@ -138,7 +138,7 @@ function LoginRegisterPopup() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-[440px] p-0 overflow-hidden border-0 bg-transparent">
+      <DialogContent className="max-w-[440px] p-0 overflow-hidden border-0 bg-transparent ">
         <div className="relative bg-white rounded-2xl shadow-2xl">
           {/* Animated Background Gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 opacity-60 rounded-2xl"></div>
@@ -150,7 +150,7 @@ function LoginRegisterPopup() {
           {/* Close Button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900 transition-all duration-300 hover:scale-110 shadow-md"
+            className="absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-white hover:bg-pink-200 text-gray-600 hover:text-gray-900 transition-all duration-300 hover:scale-110 shadow-md"
           >
             <X className="w-5 h-5" />
           </button>
@@ -226,7 +226,7 @@ function LoginRegisterPopup() {
                       <div className="w-full border-t border-gray-300"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="px-4 bg-white text-gray-500 font-medium">
+                      <span className="px-4 bg-white rounded-lg text-gray-500 font-medium">
                         Or continue with
                       </span>
                     </div>
