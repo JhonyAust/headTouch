@@ -62,8 +62,22 @@ function ShoppingListing() {
     setSort(value);
   }
 
-  function handleFilter(getSectionId, getCurrentOption) {
-    let cpyFilters = { ...filters };
+// Replace your handleFilter function with this fixed version:
+
+function handleFilter(getSectionId, getCurrentOption) {
+  let cpyFilters = { ...filters };
+  
+  // Special handling for category - only allow one category at a time
+  if (getSectionId === 'category') {
+    // If clicking the same category that's already selected, remove it
+    if (cpyFilters[getSectionId] && cpyFilters[getSectionId].includes(getCurrentOption)) {
+      delete cpyFilters[getSectionId];
+    } else {
+      // Otherwise, replace with the new category
+      cpyFilters[getSectionId] = [getCurrentOption];
+    }
+  } else {
+    // For other filters (brand, etc.), allow multiple selections
     const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
 
     if (indexOfCurrentSection === -1) {
@@ -79,10 +93,20 @@ function ShoppingListing() {
         cpyFilters[getSectionId].push(getCurrentOption);
       else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
     }
-
-    setFilters(cpyFilters);
-    sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
   }
+
+  // Clean up empty filter arrays
+  Object.keys(cpyFilters).forEach(key => {
+    if (Array.isArray(cpyFilters[key]) && cpyFilters[key].length === 0) {
+      delete cpyFilters[key];
+    }
+  });
+
+  console.log('Updated Filters:', cpyFilters); // Debug log
+
+  setFilters(cpyFilters);
+  sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
+}
   
   function handleNavigateToProductDetails(product) {
     const categorySlug = product?.category || "unknown";

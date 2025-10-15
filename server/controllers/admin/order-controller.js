@@ -2,7 +2,10 @@ const Order = require("../../models/Order");
 
 const getAllOrdersOfAllUsers = async (req, res) => {
   try {
-    const orders = await Order.find({});
+    // ✅ Sort by newest first (orderDate descending)
+    const orders = await Order.find({})
+      .sort({ orderDate: -1 }) // -1 = descending (newest first)
+      .exec();
 
     if (!orders.length) {
       return res.status(404).json({
@@ -19,7 +22,7 @@ const getAllOrdersOfAllUsers = async (req, res) => {
     console.log(e);
     res.status(500).json({
       success: false,
-      message: "Some error occured!",
+      message: "Some error occurred!",
     });
   }
 };
@@ -45,7 +48,7 @@ const getOrderDetailsForAdmin = async (req, res) => {
     console.log(e);
     res.status(500).json({
       success: false,
-      message: "Some error occured!",
+      message: "Some error occurred!",
     });
   }
 };
@@ -74,7 +77,7 @@ const updateOrderStatus = async (req, res) => {
     console.log(e);
     res.status(500).json({
       success: false,
-      message: "Some error occured!",
+      message: "Some error occurred!",
     });
   }
 };

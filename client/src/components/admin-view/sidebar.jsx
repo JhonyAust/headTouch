@@ -69,7 +69,7 @@ function MenuItems({ setOpen }) {
   const location = useLocation();
 
   return (
-    <nav className="mt-8 flex-col flex gap-2">
+    <nav className="mt-8 flex-col flex gap-2 z-10">
       {adminSidebarMenuItems.map((menuItem, index) => {
         const isActive = location.pathname === menuItem.path;
         
@@ -140,10 +140,10 @@ function AdminSideBar({ open, setOpen }) {
   const navigate = useNavigate();
 
   return (
-    <Fragment>
+    <Fragment className="z-10">
       {/* Mobile Sidebar */}
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="w-72 bg-gradient-to-br from-white via-purple-50/30 to-white">
+        <SheetContent side="left" className="w-72 z-10 bg-gradient-to-br from-white via-purple-50/30 to-white">
           <div className="flex flex-col h-full">
             <SheetHeader className="border-b border-purple-100 pb-6">
               <SheetTitle className="flex items-center gap-3 mt-5">
