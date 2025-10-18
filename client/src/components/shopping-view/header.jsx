@@ -45,10 +45,11 @@ function Header() {
     }
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    window.location.reload();
-  };
+const handleLogout = () => {
+  dispatch(logoutUser()).then(() => {
+    navigate("/shop/home");
+  });
+};
 
   const handleSearch = () => {
     if (searchKeyword.trim()) {

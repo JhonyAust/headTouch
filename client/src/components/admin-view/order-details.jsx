@@ -68,7 +68,7 @@ function AdminOrderDetailsView({ orderDetails }) {
 
   return (
     <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-hidden bg-gradient-to-br from-white to-slate-50 border-2 border-purple-100 rounded-2xl">
-      <div className="overflow-y-auto max-h-[85vh] px-2 custom-scrollbar">
+      <div className="overflow-y-auto max-h-[85vh] px-2 custom-scrollbar my-4 ">
         <div className="space-y-6 p-6">
           {/* Header */}
           <div className="relative animate-slide-down">
@@ -285,6 +285,14 @@ function AdminOrderDetailsView({ orderDetails }) {
               <h3 className="text-lg font-bold text-gray-900">Update Status</h3>
             </div>
             <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+              {formData.status === "delivered" && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-green-800">
+                    <span className="font-semibold">Note:</span> Payment status will be automatically set to "Paid" when delivered.
+                  </p>
+                </div>
+              )}
               <CommonForm
                 formControls={[
                   {

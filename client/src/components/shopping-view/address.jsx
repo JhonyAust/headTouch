@@ -8,8 +8,8 @@ import {
 } from "@/store/shop/address-slice";
 import { useToast } from "../ui/use-toast";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { MapPin, Plus, Edit, Trash2, Phone, Home, MapPinned } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { MapPin, Edit, Trash2, Phone, Home, MapPinned } from "lucide-react";
 
 function Address() {
   const dispatch = useDispatch();
@@ -18,7 +18,6 @@ function Address() {
   const { toast } = useToast();
 
   const [openDialog, setOpenDialog] = useState(false);
-  const [editingAddress, setEditingAddress] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -29,6 +28,9 @@ function Address() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
+  // Get the single address (first one in the list)
+  const currentAddress = addressList && addressList.length > 0 ? addressList[0] : null;
+
   useEffect(() => {
     if (user?.id) {
       dispatch(fetchAllAddresses(user.id));
@@ -36,17 +38,17 @@ function Address() {
   }, [dispatch, user?.id]);
 
   useEffect(() => {
-    if (editingAddress) {
+    if (currentAddress) {
       setFormData({
-        name: editingAddress.name || "",
-        address: editingAddress.address || "",
-        city: editingAddress.city || "",
-        phone: editingAddress.phone || "",
-        pincode: editingAddress.pincode || "",
-        notes: editingAddress.notes || "",
+        name: currentAddress.name || "",
+        address: currentAddress.address || "",
+        city: currentAddress.city || "",
+        phone: currentAddress.phone || "",
+        pincode: currentAddress.pincode || "",
+        notes: currentAddress.notes || "",
       });
     }
-  }, [editingAddress]);
+  }, [currentAddress]);
 
   const isFormValid = () => {
     const { name, address, city, phone, pincode } = formData;
@@ -73,11 +75,11 @@ function Address() {
     try {
       let result;
 
-      if (editingAddress) {
+      if (currentAddress) {
         // Edit existing address
         result = await dispatch(editaAddress({
           userId: user?.id,
-          addressId: editingAddress._id,
+          addressId: currentAddress._id,
           formData,
         }));
       } else {
@@ -90,10 +92,10 @@ function Address() {
 
       if (result?.payload?.success) {
         toast({ 
-          title: editingAddress ? "Address updated successfully" : "Address added successfully"
+          title: currentAddress ? "Address updated successfully" : "Address added successfully"
         });
         handleCloseDialog();
-        // Refresh addresses list
+        // Refresh address
         dispatch(fetchAllAddresses(user?.id));
       } else {
         toast({ 
@@ -112,11 +114,13 @@ function Address() {
     }
   };
 
-  const handleDelete = async (addressId) => {
+  const handleDelete = async () => {
+    if (!currentAddress) return;
+
     try {
       const result = await dispatch(deleteAddress({ 
         userId: user?.id, 
-        addressId 
+        addressId: currentAddress._id 
       }));
 
       if (result?.payload?.success) {
@@ -139,20 +143,26 @@ function Address() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setEditingAddress(null);
-    setFormData({
-      name: "",
-      address: "",
-      city: "",
-      phone: "",
-      pincode: "",
-      notes: "",
-    });
-  };
-
-  const handleEdit = (address) => {
-    setEditingAddress(address);
-    setOpenDialog(true);
+    // Reset form to current address data when closing
+    if (currentAddress) {
+      setFormData({
+        name: currentAddress.name || "",
+        address: currentAddress.address || "",
+        city: currentAddress.city || "",
+        phone: currentAddress.phone || "",
+        pincode: currentAddress.pincode || "",
+        notes: currentAddress.notes || "",
+      });
+    } else {
+      setFormData({
+        name: "",
+        address: "",
+        city: "",
+        phone: "",
+        pincode: "",
+        notes: "",
+      });
+    }
   };
 
   const handleInputChange = (e) => {
@@ -165,33 +175,107 @@ function Address() {
 
   return (
     <div className="space-y-6">
-      {/* Add New Address Button */}
-      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogTrigger asChild>
-          <Button 
-            className="group bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
-            onClick={() => {
-              setEditingAddress(null);
-              setFormData({
-                name: "",
-                address: "",
-                city: "",
-                phone: "",
-                pincode: "",
-                notes: "",
-              });
-            }}
-          >
-            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-            Add New Address
-          </Button>
-        </DialogTrigger>
+      {/* Address Display or Add Button */}
+      {currentAddress ? (
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-xl border-2 border-gray-100 hover:border-blue-300 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center">
+                  <MapPinned className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900">{currentAddress.name}</h4>
+                  <p className="text-xs text-gray-500">Your Delivery Address</p>
+                </div>
+              </div>
+            </div>
 
-        <DialogContent className="sm:max-w-[500px] rounded-2xl border-2 border-blue-100 max-h-[85vh] overflow-y-auto">
-          <DialogHeader className="sticky top-0 bg-white z-10 pb-4">
+            {/* Address Details */}
+            <div className="space-y-3 mb-4">
+              <div className="flex items-start gap-2">
+                <Home className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
+                <p className="text-sm text-gray-700">{currentAddress.address}</p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+                <p className="text-sm text-gray-700">
+                  {currentAddress.city} - {currentAddress.pincode}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-gray-400 shrink-0" />
+                <p className="text-sm font-semibold text-gray-900">
+                  {currentAddress.phone}
+                </p>
+              </div>
+
+              {currentAddress.notes && (
+                <div className="pt-2 border-t border-gray-100">
+                  <p className="text-xs text-gray-500 italic">
+                    Note: {currentAddress.notes}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setOpenDialog(true)}
+                variant="outline"
+                size="sm"
+                className="flex-1 border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Address
+              </Button>
+              <Button
+                onClick={handleDelete}
+                variant="outline"
+                size="sm"
+                className="flex-1 border-2 border-red-200 hover:border-red-400 hover:bg-red-50 text-red-600 hover:text-red-700 transition-all duration-300"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-16 animate-fade-in">
+          <div className="relative mb-6">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-full blur-2xl opacity-50 animate-pulse-slow"></div>
+            <div className="relative bg-gradient-to-br from-slate-50 to-slate-100 rounded-full p-8 border-2 border-slate-200/50 shadow-lg">
+              <MapPin className="w-20 h-20 text-slate-300" />
+            </div>
+          </div>
+          <h3 className="text-2xl font-bold text-slate-800 mb-2">
+            No Address Saved
+          </h3>
+          <p className="text-sm text-slate-500 mb-6 max-w-md text-center leading-relaxed">
+            Add your delivery address to make checkout faster and easier!
+          </p>
+          <Button 
+            className="group bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105"
+            onClick={() => setOpenDialog(true)}
+          >
+            <MapPin className="w-5 h-5 mr-2" />
+            Add Your Address
+          </Button>
+        </div>
+      )}
+
+      {/* Edit/Add Dialog */}
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent className="sm:max-w-[500px] rounded-2xl border-2 border-blue-100 max-h-[80vh] overflow-y-auto">
+          <DialogHeader className="mt-4 bg-white  pb-4">
             <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-900 to-cyan-600 bg-clip-text text-transparent flex items-center gap-2">
               <MapPin className="w-6 h-6 text-blue-600" />
-              {editingAddress ? "Edit Address" : "Add New Address"}
+              {currentAddress ? "Edit Address" : "Add Your Address"}
             </DialogTitle>
           </DialogHeader>
           
@@ -293,7 +377,7 @@ function Address() {
                 disabled={!isFormValid() || isLoading}
                 className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
               >
-                {isLoading ? "Saving..." : editingAddress ? "Save Changes" : "Add Address"}
+                {isLoading ? "Saving..." : currentAddress ? "Save Changes" : "Add Address"}
               </button>
               <button
                 onClick={handleCloseDialog}
@@ -307,111 +391,7 @@ function Address() {
         </DialogContent>
       </Dialog>
 
-      {/* Address List */}
-      {addressList && addressList.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {addressList.map((addressItem, index) => (
-            <div
-              key={addressItem._id}
-              className="group bg-white rounded-xl border-2 border-gray-100 hover:border-blue-300 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up relative"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              {/* Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <MapPinned className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900">{addressItem.name}</h4>
-                    <p className="text-xs text-gray-500">ID: {addressItem._id.slice(-6)}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Address Details */}
-              <div className="space-y-3 mb-4">
-                <div className="flex items-start gap-2">
-                  <Home className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
-                  <p className="text-sm text-gray-700">{addressItem.address}</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
-                  <p className="text-sm text-gray-700">
-                    {addressItem.city} - {addressItem.pincode}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-gray-400 shrink-0" />
-                  <p className="text-sm font-semibold text-gray-900">
-                    {addressItem.phone}
-                  </p>
-                </div>
-
-                {addressItem.notes && (
-                  <div className="pt-2 border-t border-gray-100">
-                    <p className="text-xs text-gray-500 italic">
-                      Note: {addressItem.notes}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => handleEdit(addressItem)}
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300"
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit
-                </Button>
-                <Button
-                  onClick={() => handleDelete(addressItem._id)}
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 border-2 border-red-200 hover:border-red-400 hover:bg-red-50 text-red-600 hover:text-red-700 transition-all duration-300"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-16 animate-fade-in">
-          <div className="relative mb-6">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-full blur-2xl opacity-50 animate-pulse-slow"></div>
-            <div className="relative bg-gradient-to-br from-slate-50 to-slate-100 rounded-full p-8 border-2 border-slate-200/50 shadow-lg">
-              <MapPin className="w-20 h-20 text-slate-300" />
-            </div>
-          </div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-2">
-            No Addresses Saved
-          </h3>
-          <p className="text-sm text-slate-500 mb-6 max-w-md text-center leading-relaxed">
-            Add a new address to make checkout faster and easier!
-          </p>
-        </div>
-      )}
-
       <style jsx>{`
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
         @keyframes fade-in {
           from {
             opacity: 0;
@@ -428,11 +408,6 @@ function Address() {
           50% {
             opacity: 0.8;
           }
-        }
-
-        .animate-fade-in-up {
-          animation: fade-in-up 0.5s ease-out forwards;
-          opacity: 0;
         }
 
         .animate-fade-in {

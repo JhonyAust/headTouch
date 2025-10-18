@@ -19,9 +19,9 @@ import {
   fetchProductDetails,
 } from "@/store/shop/products-slice";
 import { ArrowUpDownIcon, Sparkles, Package, Grid3x3, LayoutGrid } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import { openLoginPopup } from "../../store/loginRegister-slice";
@@ -32,12 +32,9 @@ function createSearchParamsHelper(filterParams) {
   for (const [key, value] of Object.entries(filterParams)) {
     if (Array.isArray(value) && value.length > 0) {
       const paramValue = value.join(",");
-
       queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
     }
   }
-
-  console.log(queryParams, "queryParams");
 
   return queryParams.join("&");
 }
@@ -45,68 +42,72 @@ function createSearchParamsHelper(filterParams) {
 function ShoppingListing() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { productList, productDetails } = useSelector(
     (state) => state.shopProducts
   );
   const { cartItems } = useSelector((state) => state.shopCart);
   const { user } = useSelector((state) => state.auth);
   const [filters, setFilters] = useState({});
-  const [sort, setSort] = useState(null);
+  const [sort, setSort] = useState("price-lowtohigh");
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const { toast } = useToast();
-
-  const categorySearchParam = searchParams.get("category");
+  const isInitialMount = useRef(true);
 
   function handleSort(value) {
     setSort(value);
   }
 
-// Replace your handleFilter function with this fixed version:
-
-function handleFilter(getSectionId, getCurrentOption) {
-  let cpyFilters = { ...filters };
-  
-  // Special handling for category - only allow one category at a time
-  if (getSectionId === 'category') {
-    // If clicking the same category that's already selected, remove it
-    if (cpyFilters[getSectionId] && cpyFilters[getSectionId].includes(getCurrentOption)) {
-      delete cpyFilters[getSectionId];
+  function handleFilter(getSectionId, getCurrentOption) {
+    let cpyFilters = { ...filters };
+    
+    // Special handling for category - only allow one category at a time
+    if (getSectionId === 'category') {
+      // If clicking the same category that's already selected, remove it
+      if (cpyFilters[getSectionId] && cpyFilters[getSectionId].includes(getCurrentOption)) {
+        delete cpyFilters[getSectionId];
+      } else {
+        // Otherwise, replace with the new category
+        cpyFilters[getSectionId] = [getCurrentOption];
+      }
     } else {
-      // Otherwise, replace with the new category
-      cpyFilters[getSectionId] = [getCurrentOption];
+      // For other filters (brand, etc.), allow multiple selections
+      const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
+
+      if (indexOfCurrentSection === -1) {
+        cpyFilters = {
+          ...cpyFilters,
+          [getSectionId]: [getCurrentOption],
+        };
+      } else {
+        const indexOfCurrentOption =
+          cpyFilters[getSectionId].indexOf(getCurrentOption);
+
+        if (indexOfCurrentOption === -1)
+          cpyFilters[getSectionId].push(getCurrentOption);
+        else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
+      }
     }
-  } else {
-    // For other filters (brand, etc.), allow multiple selections
-    const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
 
-    if (indexOfCurrentSection === -1) {
-      cpyFilters = {
-        ...cpyFilters,
-        [getSectionId]: [getCurrentOption],
-      };
+    // Clean up empty filter arrays
+    Object.keys(cpyFilters).forEach(key => {
+      if (Array.isArray(cpyFilters[key]) && cpyFilters[key].length === 0) {
+        delete cpyFilters[key];
+      }
+    });
+
+    setFilters(cpyFilters);
+    sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
+    
+    // Update URL
+    if (Object.keys(cpyFilters).length > 0) {
+      const queryString = createSearchParamsHelper(cpyFilters);
+      setSearchParams(new URLSearchParams(queryString));
     } else {
-      const indexOfCurrentOption =
-        cpyFilters[getSectionId].indexOf(getCurrentOption);
-
-      if (indexOfCurrentOption === -1)
-        cpyFilters[getSectionId].push(getCurrentOption);
-      else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
+      setSearchParams({});
     }
   }
-
-  // Clean up empty filter arrays
-  Object.keys(cpyFilters).forEach(key => {
-    if (Array.isArray(cpyFilters[key]) && cpyFilters[key].length === 0) {
-      delete cpyFilters[key];
-    }
-  });
-
-  console.log('Updated Filters:', cpyFilters); // Debug log
-
-  setFilters(cpyFilters);
-  sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
-}
   
   function handleNavigateToProductDetails(product) {
     const categorySlug = product?.category || "unknown";
@@ -156,42 +157,40 @@ function handleFilter(getSectionId, getCurrentOption) {
     });
   }
 
+  // ✅ Sync filters from URL on mount and when URL changes (back/forward navigation)
   useEffect(() => {
-    setSort("price-lowtohigh");
-    
-    // Get filters from sessionStorage
-    const storedFilters = JSON.parse(sessionStorage.getItem("filters")) || {};
-    
-    // Get category from URL query parameter
-    const categoryFromUrl = searchParams.get("category");
-    
-    if (categoryFromUrl) {
-      // If category exists in URL, add it to filters
-      const updatedFilters = {
-        ...storedFilters,
-        category: [categoryFromUrl]
-      };
-      setFilters(updatedFilters);
-      sessionStorage.setItem("filters", JSON.stringify(updatedFilters));
-    } else {
-      // Use stored filters if no category in URL
-      setFilters(storedFilters);
-    }
-  }, [categorySearchParam, searchParams]);
+    const params = Object.fromEntries(searchParams.entries());
+    const newFilters = {};
 
-  useEffect(() => {
-    if (filters && Object.keys(filters).length > 0) {
-      const createQueryString = createSearchParamsHelper(filters);
-      setSearchParams(new URLSearchParams(createQueryString));
-    }
-  }, [filters]);
+    // Convert URL params to filter format
+    Object.keys(params).forEach(key => {
+      if (params[key]) {
+        newFilters[key] = params[key].split(',');
+      }
+    });
 
+    setFilters(newFilters);
+    sessionStorage.setItem("filters", JSON.stringify(newFilters));
+  }, [location.search]); // Use location.search instead of searchParams to avoid loops
+
+  // ✅ Fetch products when filters or sort changes
   useEffect(() => {
-    if (filters !== null && sort !== null)
-      dispatch(
-        fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
-      );
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    dispatch(
+      fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
+    );
   }, [dispatch, sort, filters]);
+
+  // ✅ Initial fetch
+  useEffect(() => {
+    dispatch(
+      fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
+    );
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/20 mt-12 relative overflow-hidden">
@@ -309,7 +308,11 @@ function handleFilter(getSectionId, getCurrentOption) {
                     We couldn't find any products matching your filters. Try adjusting your search criteria.
                   </p>
                   <Button
-                    onClick={() => setFilters({})}
+                    onClick={() => {
+                      setFilters({});
+                      sessionStorage.removeItem("filters");
+                      setSearchParams({});
+                    }}
                     className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 h-10 px-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 font-semibold text-sm"
                   >
                     <span className="flex items-center gap-2">

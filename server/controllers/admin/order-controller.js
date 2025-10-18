@@ -67,11 +67,21 @@ const updateOrderStatus = async (req, res) => {
       });
     }
 
-    await Order.findByIdAndUpdate(id, { orderStatus });
+    // Prepare update object
+    const updateData = { orderStatus };
+
+    // ✅ Auto-set paymentStatus to 'paid' when orderStatus is 'delivered'
+    if (orderStatus === "delivered") {
+      updateData.paymentStatus = "paid";
+    }
+
+    await Order.findByIdAndUpdate(id, updateData);
 
     res.status(200).json({
       success: true,
-      message: "Order status is updated successfully!",
+      message: orderStatus === "delivered" 
+        ? "Order delivered and payment confirmed!" 
+        : "Order status is updated successfully!",
     });
   } catch (e) {
     console.log(e);

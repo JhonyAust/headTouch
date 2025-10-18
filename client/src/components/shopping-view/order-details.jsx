@@ -30,8 +30,17 @@ function ShoppingOrderDetailsView({ orderDetails }) {
     }
   };
 
+  // Get display text for payment status based on order status
+  const getPaymentStatusDisplay = () => {
+    if (orderDetails?.orderStatus === "delivered" && orderDetails?.paymentStatus === "paid") {
+      return "Completed";
+    }
+    return orderDetails?.paymentStatus;
+  };
+
   const statusConfig = getStatusConfig(orderDetails?.orderStatus);
   const StatusIcon = statusConfig.icon;
+  const displayPaymentStatus = getPaymentStatusDisplay();
 
   return (
     <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto rounded-2xl border-2 border-gray-100 p-0">
@@ -129,7 +138,7 @@ function ShoppingOrderDetailsView({ orderDetails }) {
               <span className="text-sm font-semibold text-gray-600">Payment Status</span>
             </div>
             <Badge className={`${getPaymentStatusConfig(orderDetails?.paymentStatus)} text-white capitalize font-semibold ml-13`}>
-              {orderDetails?.paymentStatus}
+              {displayPaymentStatus}
             </Badge>
           </div>
         </div>

@@ -63,10 +63,17 @@ const loginUser = async(req, res) => {
                 email: checkUser.email,
                 userName: checkUser.userName,
             },
-            "CLIENT_SECRET_KEY", { expiresIn: "60m" }
+            "CLIENT_SECRET_KEY", 
+            { expiresIn: "7d" } // ⭐ Changed from 60m to 7d
         );
 
-        res.cookie("token", token, { httpOnly: true, secure: false }).json({
+        // ⭐ FIXED: Proper cookie settings for production + Messenger
+        res.cookie("token", token, { 
+            httpOnly: true, 
+            secure: process.env.NODE_ENV === "production", // ⭐ true in production
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ⭐ "none" for Messenger
+            maxAge: 7 * 24 * 60 * 60 * 1000, // ⭐ 7 days
+        }).json({
             success: true,
             message: "Logged in successfully",
             user: {
@@ -96,7 +103,7 @@ const googleLogin = async (req, res) => {
       user = new User({
         userName,
         email,
-        password: "", // not needed for Google login
+        password: "",
       });
       await user.save();
 
@@ -113,13 +120,19 @@ const googleLogin = async (req, res) => {
         userName: user.userName,
       },
       "CLIENT_SECRET_KEY",
-      { expiresIn: "60m" }
+      { expiresIn: "7d" } // ⭐ Changed from 60m to 7d
     );
 
     console.log("🎉 JWT token generated for:", user.email);
 
+    // ⭐ FIXED: Proper cookie settings for production + Messenger
     res
-      .cookie("token", token, { httpOnly: true, secure: false })
+      .cookie("token", token, { 
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === "production", // ⭐ true in production
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ⭐ "none" for Messenger
+        maxAge: 7 * 24 * 60 * 60 * 1000, // ⭐ 7 days
+      })
       .json({
         success: true,
         message: "Google login successful",
@@ -140,11 +153,7 @@ const googleLogin = async (req, res) => {
   }
 };
 
-
-
-
 //logout
-
 const logoutUser = (req, res) => {
     res.clearCookie("token").json({
         success: true,
@@ -172,6 +181,7 @@ const authMiddleware = async(req, res, next) => {
         });
     }
 };
+
 const adminMiddleware = (req, res, next) => {
   if (req.user?.role !== "admin") {
     return res.status(403).json({
@@ -182,5 +192,4 @@ const adminMiddleware = (req, res, next) => {
   next();
 };
 
-
-module.exports = { registerUser, loginUser, logoutUser, authMiddleware, adminMiddleware,googleLogin };
+module.exports = { registerUser, loginUser, logoutUser, authMiddleware, adminMiddleware, googleLogin };

@@ -56,8 +56,62 @@ const createOrder = async(req, res) => {
         });
 
         await newOrder.save();
-        const io = req.app.get("io");
-        io.emit("newOrderPlaced", newOrder);
+        
+        console.log("\n📦 ============================================");
+        console.log("✅ NEW ORDER CREATED!");
+        console.log("📋 Order ID:", newOrder._id);
+        console.log("💰 Total Amount:", newOrder.totalAmount);
+        console.log("👤 User ID:", newOrder.userId);
+        console.log("============================================");
+        
+        // ✅ Emit Socket.IO event
+        try {
+            const io = req.app.get("io");
+            
+            if (!io) {
+                console.error("❌ Socket.IO instance not found on app!");
+                return res.status(201).json({
+                    success: true,
+                    message: "Order placed successfully (notification failed)",
+                    data: newOrder,
+                });
+            }
+
+            // Check connected clients
+            const connectedClients = io.engine.clientsCount;
+            console.log("\n🔌 Socket.IO Status:");
+            console.log("   Connected clients:", connectedClients);
+            
+            if (connectedClients === 0) {
+                console.warn("⚠️ No clients connected to Socket.IO");
+            }
+
+            // Prepare order data for emission
+            const orderData = {
+                _id: newOrder._id.toString(),
+                totalAmount: newOrder.totalAmount,
+                orderStatus: newOrder.orderStatus,
+                cartItems: newOrder.cartItems,
+                addressInfo: newOrder.addressInfo,
+                orderDate: newOrder.orderDate,
+                userId: newOrder.userId
+            };
+
+            console.log("\n📡 Emitting 'newOrderPlaced' event...");
+            console.log("   Order ID:", orderData._id);
+            console.log("   Amount:", orderData.totalAmount);
+            
+            // Emit to all connected clients
+            io.emit("newOrderPlaced", orderData);
+            
+            console.log("✅ Event emitted successfully!");
+            console.log("============================================\n");
+
+        } catch (socketError) {
+            console.error("\n❌ ============================================");
+            console.error("Socket emit error:", socketError);
+            console.error("============================================\n");
+        }
 
         res.status(201).json({
             success: true,
@@ -65,7 +119,9 @@ const createOrder = async(req, res) => {
             data: newOrder,
         });
     } catch (e) {
-        console.log(e);
+        console.error("\n❌ ============================================");
+        console.error("Create order error:", e);
+        console.error("============================================\n");
         res.status(500).json({
             success: false,
             message: "Some error occurred!",
