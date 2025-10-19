@@ -227,7 +227,7 @@ const forgotPassword = async (req, res) => {
         console.log("🪪 Generated JWT reset token for user:", user.email);
 
         // 🧩 4. Create reset link
-        const resetLink = `${process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password/${resetToken}`;
+        const resetLink = `${process.env.CLIENT_URL || 'http://headtouchbd.com'}/reset-password/${resetToken}`;
         console.log("🔗 Reset password link:", resetLink);
 
         // 🧩 5. Create email content
@@ -392,9 +392,17 @@ const resetPassword = async (req, res) => {
             });
         }
 
+        console.error("❌ Forgot password error (detailed):", error);
+
+
         res.status(500).json({
             success: false,
-            message: 'Failed to reset password. Please try again.'
+             message: "Failed to send reset email.",
+            debug: {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            },
         });
     }
 };

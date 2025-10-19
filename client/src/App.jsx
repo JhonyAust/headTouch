@@ -82,6 +82,7 @@ useEffect(() => {
     <div className="flex flex-col overflow-hidden bg-white">
       <AppInit />
       <Routes>
+        <Route path="reset-password/:token" element={<ResetPassword />} />
         <Route
           path="/"
           element={<Navigate to="/shop/home" replace />}
@@ -115,7 +116,7 @@ useEffect(() => {
           <Route path="terms" element={<TermsAndConditions />} />
           <Route path="about" element={<AboutUs />} />
           <Route path="contact" element={<ContactUs />} />
-          <Route path="reset-password/:token" element={<ResetPassword />} />
+          
 
 
           {/* ✅ Protected routes wrapped with CheckAuth */}
