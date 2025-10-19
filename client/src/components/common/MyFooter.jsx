@@ -17,22 +17,17 @@ export default function Footer() {
     },
     { 
       icon: <FaInstagram />, 
-      link: "https://instagram.com",
+      link: "https://www.instagram.com/headtouchbd",
       name: "Instagram",
       color: "hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600"
     },
     { 
       icon: <FaTiktok />, 
-      link: "https://tiktok.com",
+      link: "https://www.tiktok.com/@headtouchbd",
       name: "TikTok",
       color: "hover:bg-black"
     },
-    { 
-      icon: <FaXTwitter />, 
-      link: "https://twitter.com",
-      name: "X (Twitter)",
-      color: "hover:bg-gray-800"
-    },
+    
   ];
 
   const linkClass =

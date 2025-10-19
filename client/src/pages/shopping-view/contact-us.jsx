@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, MessageCircle, Clock, Sparkles, Facebook, Instagram } from "lucide-react";
+import { FaTiktok } from "react-icons/fa";
 
 const ContactUs = () => {
   useEffect(() => {
@@ -45,10 +46,17 @@ const ContactUs = () => {
     {
       icon: <Instagram className="w-6 h-6" />,
       name: "Instagram",
-      link: "https://instagram.com",
+      link: "https://instagram.com/headtouchbd",
       color: "hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600",
       gradient: "from-purple-600 to-pink-600"
     },
+     {
+    icon: <FaTiktok className="w-6 h-6" />,
+    name: "TikTok",
+    link: "https://www.tiktok.com/@headtouchbd",
+    color: "hover:bg-gradient-to-r hover:from-gray-800 hover:to-black",
+    gradient: "from-gray-800 to-black"
+  },
   ];
 
   return (
