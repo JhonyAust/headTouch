@@ -4,18 +4,15 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const User = require("../../models/User");
 
-// Configure Gmail transporter - Optimized for Render
+// ✅ Configure Brevo (Sendinblue) transporter - Optimized for Render
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp-relay.brevo.com',
+    port: 587,
+    secure: false, // Use STARTTLS
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    pool: true,
-    maxConnections: 1,
-    connectionTimeout: 60000,  // 60 seconds
-    greetingTimeout: 30000,    // 30 seconds
-    socketTimeout: 60000       // 60 seconds
+        user: process.env.BREVO_SMTP_USER,
+        pass: process.env.BREVO_SMTP_PASS
+    }
 });
 
 // Register
@@ -196,7 +193,7 @@ const adminMiddleware = (req, res, next) => {
     next();
 };
 
-// 🔐 FORGOT PASSWORD - Send Reset Email (Render Compatible)
+// 🔐 FORGOT PASSWORD - Send Reset Email (Using Brevo)
 const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -295,25 +292,17 @@ const forgotPassword = async (req, res) => {
             </html>
         `;
 
-        // ❌ DO NOT USE transporter.verify() - It causes timeout on Render
-        // ✅ Send email directly without verification
-
-        console.log("📤 Sending email directly (no verification)...");
+        console.log("📤 Sending email via Brevo...");
         
-        // Send email with timeout handling
-        const info = await Promise.race([
-            transporter.sendMail({
-                from: `"HeadTouch" <${process.env.EMAIL_USER}>`,
-                to: email,
-                subject: '🔐 Reset Your HeadTouch Password',
-                html: emailHTML,
-            }),
-            new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Email sending timeout')), 45000) // 45 second timeout
-            )
-        ]);
+        // Send email via Brevo (much faster, no timeout issues)
+        const info = await transporter.sendMail({
+            from: `"HeadTouch" <${process.env.BREVO_SMTP_USER}>`,
+            to: email,
+            subject: '🔐 Reset Your HeadTouch Password',
+            html: emailHTML,
+        });
 
-        console.log(`✅ Password reset email sent successfully! MessageID: ${info.messageId}`);
+        console.log(`✅ Password reset email sent successfully via Brevo! MessageID: ${info.messageId}`);
 
         res.status(200).json({
             success: true,
@@ -328,17 +317,15 @@ const forgotPassword = async (req, res) => {
         // Better error handling
         let errorMessage = 'Failed to send reset email. ';
         
-        if (error.message === 'Email sending timeout') {
-            errorMessage = 'Email service is taking too long. Please try again.';
-        } else if (error.code === 'EAUTH') {
+        if (error.code === 'EAUTH') {
             errorMessage = 'Email authentication failed. Please contact support.';
-            console.error("🔑 Check EMAIL_USER and EMAIL_PASS in environment variables");
-        } else if (error.code === 'ETIMEDOUT') {
+            console.error("🔑 Check BREVO_SMTP_USER and BREVO_SMTP_PASS in environment variables");
+        } else if (error.code === 'ETIMEDOUT' || error.code === 'ESOCKET') {
             errorMessage = 'Email service timeout. Please try again in a few moments.';
-            console.error("⏱️ Gmail SMTP timeout - Consider switching to Brevo");
-        } else if (error.code === 'ECONNECTION' || error.code === 'ESOCKET') {
+            console.error("⏱️ Brevo SMTP timeout - check your network connection");
+        } else if (error.code === 'ECONNECTION') {
             errorMessage = 'Cannot connect to email service. Please try again later.';
-            console.error("🔌 Network connection issue with Gmail");
+            console.error("🔌 Network connection issue with Brevo");
         } else {
             errorMessage += 'Please try again later.';
         }
@@ -427,10 +414,10 @@ const resetPassword = async (req, res) => {
 
         console.log(`✅ Password reset successful for: ${user.email}`);
 
-        // Send confirmation email (optional - don't fail if it doesn't send)
+        // Send confirmation email via Brevo (optional - don't fail if it doesn't send)
         try {
             await transporter.sendMail({
-                from: `"HeadTouch" <${process.env.EMAIL_USER}>`,
+                from: `"HeadTouch" <${process.env.BREVO_SMTP_USER}>`,
                 to: user.email,
                 subject: '✅ Your HeadTouch Password Was Changed',
                 html: `
@@ -452,7 +439,7 @@ const resetPassword = async (req, res) => {
                     </html>
                 `
             });
-            console.log(`📧 Confirmation email sent to: ${user.email}`);
+            console.log(`📧 Confirmation email sent via Brevo to: ${user.email}`);
         } catch (emailError) {
             console.error('⚠️ Failed to send confirmation email (non-critical):', emailError.message);
             // Don't fail the request if confirmation email fails
