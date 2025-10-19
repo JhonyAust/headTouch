@@ -40,6 +40,7 @@ import AboutUs from "./pages/shopping-view/about-us";
 import ContactUs from "./pages/shopping-view/contact-us";
 import AdminCouponsView from "./pages/admin-view/admin-coupon-view";
 import TermsAndConditions from "./pages/shopping-view/terms";
+import ResetPassword from "./pages/auth/RestPassword";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -114,7 +115,7 @@ useEffect(() => {
           <Route path="terms" element={<TermsAndConditions />} />
           <Route path="about" element={<AboutUs />} />
           <Route path="contact" element={<ContactUs />} />
-
+          <Route path="reset-password/:token" element={<ResetPassword />} />
 
 
           {/* ✅ Protected routes wrapped with CheckAuth */}
@@ -128,6 +129,7 @@ useEffect(() => {
               <ShoppingAccount />
             </CheckAuth>
           } />
+
           <Route path="order-confirmation" element={
             
               <OrderConfirmation/>

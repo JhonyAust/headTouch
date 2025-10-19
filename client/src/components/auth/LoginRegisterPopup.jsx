@@ -1,10 +1,11 @@
+// components/LoginRegisterPopup.jsx
 import { useSelector, useDispatch } from "react-redux";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { closePopup, switchToLogin, switchToRegister } from "../../store/loginRegister-slice";
 import { useToast } from "@/components/ui/use-toast";
 import CommonForm from "@/components/common/form";
 import { loginFormControls, registerFormControls } from "@/config";
-import { loginUser, registerUser } from "@/store/auth-slice";
+import { loginUser, registerUser, forgotPassword } from "@/store/auth-slice";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addToCart } from "@/store/shop/cart-slice";
@@ -17,7 +18,6 @@ import {
 import { toggleWishlistItem, fetchWishlist } from "@/store/shop/wishlist-slice";
 import { loginWithGoogle } from "@/store/auth-slice";
 import { Sparkles, LogIn, UserPlus, X, ArrowLeft, Mail, CheckCircle } from "lucide-react";
-import axios from "axios";
 
 const initialLoginState = {
   email: "",
@@ -147,21 +147,23 @@ function LoginRegisterPopup() {
     setForgotLoading(true);
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auth/forgot-password`,
-        { email: forgotEmail }
-      );
+      const result = await dispatch(forgotPassword(forgotEmail));
 
-      if (response.data.success) {
+      if (result.payload?.success) {
         setEmailSent(true);
         toast({ 
           title: "✅ Email Sent!", 
           description: "Check your inbox for the reset link" 
         });
+      } else {
+        toast({ 
+          title: result.payload || "Email not found", 
+          variant: "destructive" 
+        });
       }
     } catch (error) {
       toast({ 
-        title: error.response?.data?.message || "Email not found", 
+        title: "Failed to send email", 
         variant: "destructive" 
       });
     } finally {
@@ -352,6 +354,7 @@ function LoginRegisterPopup() {
                       {/* Forgot Password Button */}
                       <div className="text-right -mt-2">
                         <button
+                          type="button"
                           onClick={() => setShowForgotPassword(true)}
                           className="text-sm text-gray-500 hover:text-purple-600 font-medium transition-colors duration-300"
                         >

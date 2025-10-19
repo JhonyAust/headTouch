@@ -1,3 +1,4 @@
+// routes/auth/auth-routes.js
 const express = require("express");
 const {
     registerUser,
@@ -5,10 +6,14 @@ const {
     logoutUser,
     authMiddleware,
     googleLogin,
+    forgotPassword,
+    verifyResetToken,
+    resetPassword,
 } = require("../../controllers/auth/auth-controller");
 
 const router = express.Router();
 
+// Existing routes
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/google-login", googleLogin);
@@ -21,5 +26,10 @@ router.get("/check-auth", authMiddleware, (req, res) => {
         user,
     });
 });
+
+// 🔐 NEW: Forgot Password routes
+router.post("/forgot-password", forgotPassword);
+router.get("/verify-reset-token/:token", verifyResetToken);
+router.post("/reset-password/:token", resetPassword);
 
 module.exports = router;

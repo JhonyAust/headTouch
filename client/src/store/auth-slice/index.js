@@ -1,6 +1,7 @@
+// store/auth-slice.js
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "@/components/api/axiosInstance";
-import { auth, googleProvider } from "../../Firebase/firebase"
+import { auth, googleProvider } from "../../Firebase/firebase";
 import { signInWithPopup, signOut } from "firebase/auth";
 
 const initialState = {
@@ -11,7 +12,6 @@ const initialState = {
 
 export const registerUser = createAsyncThunk(
     "/auth/register",
-
     async(formData) => {
         const response = await axiosInstance.post(
             "/api/auth/register",
@@ -19,14 +19,12 @@ export const registerUser = createAsyncThunk(
                 withCredentials: true,
             }
         );
-
         return response.data;
     }
 );
 
 export const loginUser = createAsyncThunk(
     "/auth/login",
-
     async(formData) => {
         const response = await axiosInstance.post(
             "/api/auth/login",
@@ -34,28 +32,24 @@ export const loginUser = createAsyncThunk(
                 withCredentials: true,
             }
         );
-
         return response.data;
     }
 );
 
 export const logoutUser = createAsyncThunk(
     "/auth/logout",
-
     async() => {
         const response = await axiosInstance.post(
             "/api/auth/logout", {}, {
                 withCredentials: true,
             }
         );
-
         return response.data;
     }
 );
 
 export const checkAuth = createAsyncThunk(
     "/auth/checkauth",
-
     async() => {
         const response = await axiosInstance.get(
             "/api/auth/check-auth", {
@@ -65,49 +59,100 @@ export const checkAuth = createAsyncThunk(
                 },
             }
         );
-
         return response.data;
     }
 );
 
 export const loginWithGoogle = createAsyncThunk(
-  "auth/loginWithGoogle",
-  async (_, thunkAPI) => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      console.log("Firebase login result:", result); // 🔹
+    "auth/loginWithGoogle",
+    async (_, thunkAPI) => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            console.log("Firebase login result:", result);
 
-      const user = result.user;
+            const user = result.user;
 
-      const response = await axiosInstance.post(
-        "/api/auth/google-login",
-        {
-          email: user.email,
-          userName: user.displayName,
-        },
-        { withCredentials: true }
-      );
+            const response = await axiosInstance.post(
+                "/api/auth/google-login",
+                {
+                    email: user.email,
+                    userName: user.displayName,
+                },
+                { withCredentials: true }
+            );
 
-      console.log("Backend response:", response.data);
-
-      return response.data;
-    } catch (err) {
-      console.error("Google login error:", err); 
-      return thunkAPI.rejectWithValue(err.message);
+            console.log("Backend response:", response.data);
+            return response.data;
+        } catch (err) {
+            console.error("Google login error:", err); 
+            return thunkAPI.rejectWithValue(err.message);
+        }
     }
-  }
 );
-
 
 // Firebase logout
 export const logoutWithGoogle = createAsyncThunk(
-  "auth/logoutWithGoogle",
-  async () => {
-    await signOut(auth);
-    return { success: true };
-  }
+    "auth/logoutWithGoogle",
+    async () => {
+        await signOut(auth);
+        return { success: true };
+    }
 );
 
+// 🔐 NEW: Forgot Password Actions
+export const forgotPassword = createAsyncThunk(
+    "auth/forgotPassword",
+    async (email, thunkAPI) => {
+        console.log("📨 Dispatching forgotPassword action with email:", email);
+        try {
+            const response = await axiosInstance.post(
+                "/api/auth/forgot-password",
+                { email }
+            );
+            console.log("✅ Forgot password API response:", response.data);
+            return response.data;
+        } catch (err) {
+            console.error("❌ Forgot password API error:", err.response?.data || err);
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to send reset email"
+            );
+        }
+    }
+);
+
+
+export const verifyResetToken = createAsyncThunk(
+    "auth/verifyResetToken",
+    async (token, thunkAPI) => {
+        try {
+            const response = await axiosInstance.get(
+                `/api/auth/verify-reset-token/${token}`
+            );
+            return response.data;
+        } catch (err) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Invalid or expired token"
+            );
+        }
+    }
+);
+
+export const resetPassword = createAsyncThunk(
+    "auth/resetPassword",
+    async ({ token, newPassword }, thunkAPI) => {
+        try {
+            const response = await axiosInstance.post(
+                `/api/auth/reset-password/${token}`,
+                { newPassword }
+            );
+            return response.data;
+        } catch (err) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to reset password"
+            );
+        }
+    }
+);
 
 const authSlice = createSlice({
     name: "auth",
@@ -134,8 +179,6 @@ const authSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(loginUser.fulfilled, (state, action) => {
-                console.log(action);
-
                 state.isLoading = false;
                 state.user = action.payload.success ? action.payload.user : null;
                 state.isAuthenticated = action.payload.success;
@@ -164,24 +207,23 @@ const authSlice = createSlice({
                 state.isAuthenticated = false;
             })
             .addCase(loginWithGoogle.pending, (state) => {
-            state.isLoading = true;
+                state.isLoading = true;
             })
             .addCase(loginWithGoogle.fulfilled, (state, action) => {
-              state.isLoading = false;
-              state.user = action.payload.user;
-              state.isAuthenticated = true;
+                state.isLoading = false;
+                state.user = action.payload.user;
+                state.isAuthenticated = true;
             })
             .addCase(loginWithGoogle.rejected, (state) => {
-              state.isLoading = false;
-              state.user = null;
-              state.isAuthenticated = false;
+                state.isLoading = false;
+                state.user = null;
+                state.isAuthenticated = false;
             })
             .addCase(logoutWithGoogle.fulfilled, (state) => {
-              state.isLoading = false;
-              state.user = null;
-              state.isAuthenticated = false;
+                state.isLoading = false;
+                state.user = null;
+                state.isAuthenticated = false;
             });
-            
     },
 });
 
