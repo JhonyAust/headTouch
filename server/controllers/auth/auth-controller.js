@@ -1,19 +1,37 @@
 // controllers/auth/auth-controller.js
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
+const axios = require("axios");
 const User = require("../../models/User");
 
-// ✅ Configure Brevo (Sendinblue) transporter - Optimized for Render
-const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com',
-    port: 587,
-    secure: false, // Use STARTTLS
-    auth: {
-        user: process.env.BREVO_SMTP_USER,
-        pass: process.env.BREVO_SMTP_PASS
+// ✅ Brevo API Email Function (Works on Render - uses HTTPS instead of SMTP)
+async function sendBrevoEmail(to, subject, htmlContent) {
+    try {
+        const response = await axios.post(
+            'https://api.brevo.com/v3/smtp/email',
+            {
+                sender: {
+                    name: "HeadTouch",
+                    email: process.env.BREVO_SENDER_EMAIL || "headtouchbd@gmail.com"
+                },
+                to: [{ email: to }],
+                subject: subject,
+                htmlContent: htmlContent
+            },
+            {
+                headers: {
+                    'accept': 'application/json',
+                    'api-key': process.env.BREVO_API_KEY,
+                    'content-type': 'application/json'
+                }
+            }
+        );
+        return { success: true, messageId: response.data.messageId };
+    } catch (error) {
+        console.error('❌ Brevo API Error:', error.response?.data || error.message);
+        throw error;
     }
-});
+}
 
 // Register
 const registerUser = async(req, res) => {
@@ -193,7 +211,7 @@ const adminMiddleware = (req, res, next) => {
     next();
 };
 
-// 🔐 FORGOT PASSWORD - Send Reset Email (Using Brevo)
+// 🔐 FORGOT PASSWORD - Send Reset Email (Using Brevo API)
 const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -292,17 +310,12 @@ const forgotPassword = async (req, res) => {
             </html>
         `;
 
-        console.log("📤 Sending email via Brevo...");
+        console.log("📤 Sending email via Brevo API...");
         
-        // Send email via Brevo (much faster, no timeout issues)
-        const info = await transporter.sendMail({
-            from: `"HeadTouch" <${process.env.BREVO_SMTP_USER}>`,
-            to: email,
-            subject: '🔐 Reset Your HeadTouch Password',
-            html: emailHTML,
-        });
+        // Send email via Brevo API (uses HTTPS - no firewall issues)
+        const result = await sendBrevoEmail(email, '🔐 Reset Your HeadTouch Password', emailHTML);
 
-        console.log(`✅ Password reset email sent successfully via Brevo! MessageID: ${info.messageId}`);
+        console.log(`✅ Password reset email sent successfully via Brevo API! MessageID: ${result.messageId}`);
 
         res.status(200).json({
             success: true,
@@ -311,23 +324,13 @@ const forgotPassword = async (req, res) => {
 
     } catch (error) {
         console.error("❌ Forgot password error:", error.message);
-        console.error("Error code:", error.code);
-        console.error("Error details:", error);
+        console.error("Error details:", error.response?.data || error);
 
-        // Better error handling
-        let errorMessage = 'Failed to send reset email. ';
+        let errorMessage = 'Failed to send reset email. Please try again later.';
         
-        if (error.code === 'EAUTH') {
-            errorMessage = 'Email authentication failed. Please contact support.';
-            console.error("🔑 Check BREVO_SMTP_USER and BREVO_SMTP_PASS in environment variables");
-        } else if (error.code === 'ETIMEDOUT' || error.code === 'ESOCKET') {
-            errorMessage = 'Email service timeout. Please try again in a few moments.';
-            console.error("⏱️ Brevo SMTP timeout - check your network connection");
-        } else if (error.code === 'ECONNECTION') {
-            errorMessage = 'Cannot connect to email service. Please try again later.';
-            console.error("🔌 Network connection issue with Brevo");
-        } else {
-            errorMessage += 'Please try again later.';
+        if (error.response?.status === 401) {
+            errorMessage = 'Email service authentication failed. Please contact support.';
+            console.error("🔑 Check BREVO_API_KEY in environment variables");
         }
 
         res.status(500).json({
@@ -414,32 +417,29 @@ const resetPassword = async (req, res) => {
 
         console.log(`✅ Password reset successful for: ${user.email}`);
 
-        // Send confirmation email via Brevo (optional - don't fail if it doesn't send)
+        // Send confirmation email via Brevo API (optional - don't fail if it doesn't send)
         try {
-            await transporter.sendMail({
-                from: `"HeadTouch" <${process.env.BREVO_SMTP_USER}>`,
-                to: user.email,
-                subject: '✅ Your HeadTouch Password Was Changed',
-                html: `
-                    <!DOCTYPE html>
-                    <html>
-                    <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                            <h1 style="color: white; margin: 0;">✅ Password Changed</h1>
-                        </div>
-                        <div style="padding: 30px; background: white; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
-                            <p style="font-size: 16px; color: #333;">Hi <strong>${user.userName}</strong>,</p>
-                            <p style="color: #666;">Your password has been successfully changed. You can now login to HeadTouch with your new password.</p>
-                            <p style="color: #ef4444; margin-top: 20px;"><strong>⚠️ Important:</strong> If you didn't make this change, please contact our support team immediately.</p>
-                        </div>
-                        <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
-                            <p style="margin: 0;">© 2025 HeadTouch. All rights reserved.</p>
-                        </div>
-                    </body>
-                    </html>
-                `
-            });
-            console.log(`📧 Confirmation email sent via Brevo to: ${user.email}`);
+            const confirmHTML = `
+                <!DOCTYPE html>
+                <html>
+                <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                        <h1 style="color: white; margin: 0;">✅ Password Changed</h1>
+                    </div>
+                    <div style="padding: 30px; background: white; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
+                        <p style="font-size: 16px; color: #333;">Hi <strong>${user.userName}</strong>,</p>
+                        <p style="color: #666;">Your password has been successfully changed. You can now login to HeadTouch with your new password.</p>
+                        <p style="color: #ef4444; margin-top: 20px;"><strong>⚠️ Important:</strong> If you didn't make this change, please contact our support team immediately.</p>
+                    </div>
+                    <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
+                        <p style="margin: 0;">© 2025 HeadTouch. All rights reserved.</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            await sendBrevoEmail(user.email, '✅ Your HeadTouch Password Was Changed', confirmHTML);
+            console.log(`📧 Confirmation email sent via Brevo API to: ${user.email}`);
         } catch (emailError) {
             console.error('⚠️ Failed to send confirmation email (non-critical):', emailError.message);
             // Don't fail the request if confirmation email fails
