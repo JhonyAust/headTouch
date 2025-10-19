@@ -15,6 +15,10 @@ async function sendBrevoEmail(to, subject, htmlContent) {
                     email: process.env.BREVO_SENDER_EMAIL || "headtouchbd@gmail.com"
                 },
                 to: [{ email: to }],
+                replyTo: {
+                    email: process.env.BREVO_SENDER_EMAIL || "headtouchbd@gmail.com",
+                    name: "HeadTouch Support"
+                },
                 subject: subject,
                 htmlContent: htmlContent
             },
@@ -250,13 +254,14 @@ const forgotPassword = async (req, res) => {
         const resetLink = `${process.env.CLIENT_URL || 'https://headtouchbd.com'}/reset-password/${resetToken}`;
         console.log("🔗 Reset password link:", resetLink);
 
-        // Create email HTML
+        // Create email HTML (optimized to avoid spam)
         const emailHTML = `
             <!DOCTYPE html>
             <html>
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Password Reset - HeadTouch</title>
             </head>
             <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5;">
                 <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 20px;">
@@ -266,40 +271,43 @@ const forgotPassword = async (req, res) => {
                                 <!-- Header -->
                                 <tr>
                                     <td style="background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%); padding: 40px; text-align: center;">
-                                        <h1 style="color: white; margin: 0; font-size: 28px;">🔐 Password Reset</h1>
+                                        <h1 style="color: white; margin: 0; font-size: 28px;">Password Reset Request</h1>
                                     </td>
                                 </tr>
                                 <!-- Content -->
                                 <tr>
                                     <td style="padding: 40px 30px;">
-                                        <p style="font-size: 16px; color: #333; margin: 0 0 15px 0;">Hi <strong>${user.userName || "there"}</strong>,</p>
-                                        <p style="color: #666; margin: 0 0 25px 0; line-height: 1.6;">We received a request to reset your password for your <strong>HeadTouch</strong> account.</p>
-                                        <p style="color: #666; margin: 0 0 30px 0;">Click the button below to create a new password:</p>
+                                        <p style="font-size: 16px; color: #333; margin: 0 0 15px 0;">Hello ${user.userName || "there"},</p>
+                                        <p style="color: #666; margin: 0 0 25px 0; line-height: 1.6;">We received a request to reset the password for your HeadTouch account associated with ${email}.</p>
+                                        <p style="color: #666; margin: 0 0 30px 0;">To reset your password, please click the button below:</p>
                                         
                                         <!-- Button -->
                                         <table width="100%" cellpadding="0" cellspacing="0">
                                             <tr>
                                                 <td align="center" style="padding: 20px 0;">
-                                                    <a href="${resetLink}" style="background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold; font-size: 16px;">Reset My Password</a>
+                                                    <a href="${resetLink}" style="background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold; font-size: 16px;">Reset Password</a>
                                                 </td>
                                             </tr>
                                         </table>
                                         
                                         <!-- Warning Box -->
                                         <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 25px 0; border-radius: 4px;">
-                                            <p style="margin: 0; color: #92400e; font-size: 14px;"><strong>⚠️ Security Notice:</strong> This link expires in 1 hour. If you didn't request this reset, please ignore this email.</p>
+                                            <p style="margin: 0; color: #92400e; font-size: 14px;"><strong>Security Notice:</strong> This link will expire in 1 hour. If you did not request a password reset, you can safely ignore this email.</p>
                                         </div>
                                         
                                         <!-- Link -->
-                                        <p style="color: #999; font-size: 12px; margin: 20px 0 5px 0;">Or copy and paste this link into your browser:</p>
+                                        <p style="color: #999; font-size: 12px; margin: 20px 0 5px 0;">If the button does not work, copy and paste this link into your browser:</p>
                                         <p style="word-break: break-all; color: #9333ea; font-size: 12px; background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 0;">${resetLink}</p>
+                                        
+                                        <p style="color: #666; margin: 25px 0 0 0; font-size: 14px;">Best regards,<br>The HeadTouch Team</p>
                                     </td>
                                 </tr>
                                 <!-- Footer -->
                                 <tr>
                                     <td style="background: #f9fafb; padding: 20px; text-align: center;">
-                                        <p style="margin: 0; color: #666; font-size: 12px;">© 2025 HeadTouch. All rights reserved.</p>
-                                        <p style="margin: 10px 0 0 0; color: #999; font-size: 11px;">This is an automated email. Please do not reply.</p>
+                                        <p style="margin: 0; color: #666; font-size: 12px;">© 2025 HeadTouch BD. All rights reserved.</p>
+                                        <p style="margin: 10px 0 0 0; color: #999; font-size: 11px;">This email was sent to ${email}. This is an automated message, please do not reply.</p>
+                                        <p style="margin: 10px 0 0 0; color: #999; font-size: 11px;">HeadTouch, Dhaka, Bangladesh</p>
                                     </td>
                                 </tr>
                             </table>
@@ -313,7 +321,7 @@ const forgotPassword = async (req, res) => {
         console.log("📤 Sending email via Brevo API...");
         
         // Send email via Brevo API (uses HTTPS - no firewall issues)
-        const result = await sendBrevoEmail(email, '🔐 Reset Your HeadTouch Password', emailHTML);
+        const result = await sendBrevoEmail(email, 'Reset Your HeadTouch Password', emailHTML);
 
         console.log(`✅ Password reset email sent successfully via Brevo API! MessageID: ${result.messageId}`);
 
