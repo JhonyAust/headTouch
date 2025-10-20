@@ -46,11 +46,50 @@ function LoginRegisterPopup() {
   const [emailSent, setEmailSent] = useState(false);
   const [forgotLoading, setForgotLoading] = useState(false);
 
+  // Password Validation State
+  const [passwordError, setPasswordError] = useState("");
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+
+  // Password Validation Function
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+    if (password.length < minLength) {
+      return "Password must be at least 8 characters long";
+    }
+    if (!hasUpperCase) {
+      return "Password must contain at least one uppercase letter";
+    }
+    if (!hasNumber) {
+      return "Password must contain at least one digit";
+    }
+    if (!hasSpecialChar) {
+      return "Password must contain at least one special character";
+    }
+    return "";
+  };
+
+  // Check password requirements for display
+  const getPasswordRequirements = (password) => {
+    return {
+      minLength: password.length >= 8,
+      hasUpperCase: /[A-Z]/.test(password),
+      hasNumber: /\d/.test(password),
+      hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    };
+  };
+
   const handleClose = () => {
     dispatch(closePopup());
     setShowForgotPassword(false);
     setEmailSent(false);
     setForgotEmail("");
+    setPasswordError("");
+    setShowPasswordRequirements(false);
     navigate('/shop/home');
   };
 
@@ -116,11 +155,28 @@ function LoginRegisterPopup() {
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
+    
+    // Validate password before submitting
+    const passwordValidationError = validatePassword(registerData.password);
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
+      toast({ 
+        title: "Invalid Password", 
+        description: passwordValidationError,
+        variant: "destructive" 
+      });
+      return;
+    }
+
     setIsLoading(true);
+    setPasswordError("");
+    
     dispatch(registerUser(registerData)).then((data) => {
       if (data?.payload?.success) {
         toast({ title: data?.payload?.message });
         dispatch(switchToLogin());
+        setRegisterData(initialRegisterState);
+        setShowPasswordRequirements(false);
       } else {
         toast({ title: data?.payload?.message, variant: "destructive" });
       }
@@ -424,9 +480,80 @@ function LoginRegisterPopup() {
                           </span>
                         }
                         formData={registerData}
-                        setFormData={setRegisterData}
+                        setFormData={(data) => {
+                          setRegisterData(data);
+                          // Show password requirements when user starts typing password
+                          if (data.password && data.password.length > 0) {
+                            setShowPasswordRequirements(true);
+                          } else {
+                            setShowPasswordRequirements(false);
+                          }
+                        }}
                         onSubmit={handleRegisterSubmit}
                       />
+
+                      {/* Password Requirements Indicator */}
+                      {showPasswordRequirements && registerData.password && (
+                        <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 space-y-2">
+                          <p className="text-sm font-semibold text-gray-700 mb-2">
+                            Password Requirements:
+                          </p>
+                          {(() => {
+                            const requirements = getPasswordRequirements(registerData.password);
+                            return (
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  {requirements.minLength ? (
+                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                  ) : (
+                                    <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                                  )}
+                                  <span className={`text-xs ${requirements.minLength ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
+                                    At least 8 characters
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {requirements.hasUpperCase ? (
+                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                  ) : (
+                                    <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                                  )}
+                                  <span className={`text-xs ${requirements.hasUpperCase ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
+                                    One uppercase letter
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {requirements.hasNumber ? (
+                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                  ) : (
+                                    <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                                  )}
+                                  <span className={`text-xs ${requirements.hasNumber ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
+                                    At least one digit
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {requirements.hasSpecialChar ? (
+                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                  ) : (
+                                    <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                                  )}
+                                  <span className={`text-xs ${requirements.hasSpecialChar ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
+                                    One special character (!@#$%^&*...)
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      )}
+
+                      {/* Password Error Message */}
+                      {passwordError && (
+                        <div className="bg-red-50 border-2 border-red-200 rounded-xl p-3 text-sm text-red-700">
+                          {passwordError}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

@@ -21,6 +21,40 @@ function ResetPassword() {
   const [verifyingToken, setVerifyingToken] = useState(true);
   const [userEmail, setUserEmail] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+
+  // Password Validation Function
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+    if (password.length < minLength) {
+      return "Password must be at least 8 characters long";
+    }
+    if (!hasUpperCase) {
+      return "Password must contain at least one uppercase letter";
+    }
+    if (!hasNumber) {
+      return "Password must contain at least one digit";
+    }
+    if (!hasSpecialChar) {
+      return "Password must contain at least one special character";
+    }
+    return "";
+  };
+
+  // Check password requirements for display
+  const getPasswordRequirements = (password) => {
+    return {
+      minLength: password.length >= 8,
+      hasUpperCase: /[A-Z]/.test(password),
+      hasNumber: /\d/.test(password),
+      hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    };
+  };
 
   // Verify token on component mount
   useEffect(() => {
@@ -57,11 +91,13 @@ function ResetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
-    if (password.length < 6) {
+    // Validate password
+    const passwordValidationError = validatePassword(password);
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
       toast({
-        title: 'Password too short',
-        description: 'Password must be at least 6 characters',
+        title: 'Invalid Password',
+        description: passwordValidationError,
         variant: 'destructive'
       });
       return;
@@ -77,6 +113,7 @@ function ResetPassword() {
     }
 
     setIsLoading(true);
+    setPasswordError('');
 
     try {
       const result = await dispatch(resetPassword({ token, newPassword: password }));
@@ -202,11 +239,14 @@ function ResetPassword() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter new password (min 6 characters)"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setShowPasswordRequirements(e.target.value.length > 0);
+                  setPasswordError('');
+                }}
+                placeholder="Enter new password"
                 className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors duration-300"
                 required
-                minLength={6}
               />
               <button
                 type="button"
@@ -217,6 +257,69 @@ function ResetPassword() {
               </button>
             </div>
           </div>
+
+          {/* Password Requirements Indicator */}
+          {showPasswordRequirements && password && (
+            <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-3 space-y-1">
+              <p className="text-xs font-semibold text-gray-700 mb-1.5">
+                Password Requirements:
+              </p>
+              {(() => {
+                const requirements = getPasswordRequirements(password);
+                return (
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      {requirements.minLength ? (
+                        <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                      ) : (
+                        <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></div>
+                      )}
+                      <span className={`text-xs ${requirements.minLength ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
+                        At least 8 characters
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {requirements.hasUpperCase ? (
+                        <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                      ) : (
+                        <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></div>
+                      )}
+                      <span className={`text-xs ${requirements.hasUpperCase ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
+                        One uppercase letter
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {requirements.hasNumber ? (
+                        <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                      ) : (
+                        <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></div>
+                      )}
+                      <span className={`text-xs ${requirements.hasNumber ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
+                        At least one digit
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {requirements.hasSpecialChar ? (
+                        <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                      ) : (
+                        <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></div>
+                      )}
+                      <span className={`text-xs ${requirements.hasSpecialChar ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
+                        One special character (!@#$%^&*...)
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* Password Error Message */}
+          {passwordError && (
+            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-2.5 text-xs text-red-700">
+              {passwordError}
+            </div>
+          )}
 
           {/* Confirm Password */}
           <div>
@@ -231,7 +334,6 @@ function ResetPassword() {
                 placeholder="Confirm your new password"
                 className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors duration-300"
                 required
-                minLength={6}
               />
               <button
                 type="button"
