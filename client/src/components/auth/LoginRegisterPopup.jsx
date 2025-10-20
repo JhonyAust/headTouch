@@ -209,7 +209,7 @@ function LoginRegisterPopup() {
         setEmailSent(true);
         toast({ 
           title: "✅ Email Sent!", 
-          description: "Check your inbox for the reset link" 
+          description: "Please check your inbox for the reset link" 
         });
       } else {
         toast({ 
