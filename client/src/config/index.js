@@ -98,7 +98,7 @@ export const shoppingViewHeaderMenuItems = [{
     {
         id: "new",
         label: "New Arrival",
-        path: "/shop/listing",
+        path: "/shop/listing?category=new",
     },
     // {
     //     id: "limited",
@@ -108,7 +108,7 @@ export const shoppingViewHeaderMenuItems = [{
     {
         id: "best",
         label: "Best Selling",
-        path: "/shop/listing",
+        path: "/shop/listing?category=best",
     },
     // {
     //     id: "premium",

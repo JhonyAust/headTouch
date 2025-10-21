@@ -6,32 +6,43 @@ const initialState = {
 };
 
 export const addToCart = createAsyncThunk(
-  "cart/addToCart",
-  async ({ userId, productId, quantity, image }) => {
-    const response = await axiosInstance.post("/api/shop/cart/add", {
-      userId,
-      productId,
-      quantity,
-      image, 
-    });
-console.log("Image it is:",image);
-    return response.data;
-  }
+    "cart/addToCart",
+    async({ userId, productId, quantity, image }) => {
+        const response = await axiosInstance.post("/api/shop/cart/add", {
+            userId,
+            productId,
+            quantity,
+            image,
+        });
+        console.log("Image it is:", image);
+        return response.data;
+    }
 );
 
 
 export const fetchCartItems = createAsyncThunk(
     "cart/fetchCartItems",
-    async(userId) => {
-        const response = await axiosInstance.get(
-            `/api/shop/cart/get/${userId}`
-        );
-        console.log("The Cart Response Data:",response.data);
-
-        return response.data;
+    async(userId, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get(
+                `/api/shop/cart/get/${userId}`
+            );
+            console.log("The Cart Response Data:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Fetch cart error:", error);
+            // Return empty cart on error instead of rejecting
+            return {
+                success: true,
+                data: {
+                    cartId: null,
+                    userId: userId,
+                    items: [],
+                },
+            };
+        }
     }
 );
-
 export const deleteCartItem = createAsyncThunk(
     "cart/deleteCartItem",
     async({ userId, productId }) => {

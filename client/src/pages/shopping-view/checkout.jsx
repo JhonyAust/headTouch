@@ -92,50 +92,52 @@ function Checkout() {
     return bdRegex.test(number);
   };
 
-  const handlePlaceOrder = async () => {
-    const { name, phone, address, city, pincode } = billingDetails;
-    if (!name || !phone || !address || !city || !pincode) {
-      toast({ title: "Please fill all required billing fields", variant: "destructive" });
-      return;
-    }
+const handlePlaceOrder = async () => {
+  const { name, phone, address, city, pincode } = billingDetails;
+  
+  if (!name || !phone || !address || !city || !pincode) {
+    toast({ title: "Please fill all required billing fields", variant: "destructive" });
+    return;
+  }
 
-    if (!validateBDPhoneNumber(phone)) {
-      toast({ title: "Please enter a valid BD mobile number", variant: "destructive" });
-      return;
-    }
+  if (!validateBDPhoneNumber(phone)) {
+    toast({ title: "Please enter a valid BD mobile number", variant: "destructive" });
+    return;
+  }
 
-    if (!cartItems || cartItems.items.length === 0) {
-      toast({ title: "Your cart is empty", variant: "destructive" });
-      return;
-    }
+  if (!cartItems || cartItems.items.length === 0) {
+    toast({ title: "Your cart is empty", variant: "destructive" });
+    return;
+  }
 
-    const orderData = {
-      userId: user?.id,
-      cartId: cartItems?._id,
-      cartItems: cartItems.items.map((item) => ({
-        productId: item.productId,
-        title: item.title,
-        image: item.image,
-        price: item.salePrice > 0 ? item.salePrice : item.price,
-        quantity: item.quantity,
-      })),
-      addressInfo: billingDetails,
-      orderStatus: "pending",
-      paymentMethod: "COD",
-      paymentStatus: "pending",
-      shippingCharge,
-      shippingType,
-      totalAmount,
-      orderDate: new Date(),
-      orderUpdateDate: new Date(),
-      paymentId: "",
-      payerId: "",
-      couponCode: appliedCoupon?.code || null,
-      discountAmount: discountAmount || 0,
-    };
+  const orderData = {
+    userId: user?.id,
+    cartId: cartItems?._id,
+    cartItems: cartItems.items.map((item) => ({
+      productId: item.productId,
+      title: item.title,
+      image: item.image,
+      price: item.salePrice > 0 ? item.salePrice : item.price,
+      quantity: item.quantity,
+    })),
+    addressInfo: billingDetails,
+    orderStatus: "pending",
+    paymentMethod: "COD",
+    paymentStatus: "pending",
+    shippingCharge,
+    shippingType,
+    totalAmount,
+    orderDate: new Date(),
+    orderUpdateDate: new Date(),
+    paymentId: "",
+    payerId: "",
+    couponCode: appliedCoupon?.code || null,
+    discountAmount: discountAmount || 0,
+  };
 
-    setIsPlacingOrder(true);
+  setIsPlacingOrder(true);
 
+  try {
     if (user && saveBilling) {
       const existingAddress = addressList[0];
       if (existingAddress) {
@@ -152,27 +154,53 @@ function Checkout() {
       await dispatch(fetchAllAddresses(user.id));
     }
 
-    dispatch(createNewOrder(orderData)).then((data) => {
-      setIsPlacingOrder(false);
-      if (data?.payload?.success) {
-        toast({ title: "Order placed successfully" });
-        if (user) {
-          dispatch(fetchCartItems(user.id));
-        } else {
-          dispatch(clearLocalCart());
-        }
-        navigate("/shop/order-confirmation", {
-          state: {
-            address: billingDetails,
-            cartItems: cartItems.items,
-            totalAmount,
-          },
-        });
+    const orderResponse = await dispatch(createNewOrder(orderData));
+    
+    if (orderResponse?.payload?.success) {
+      // Reset coupon
+      dispatch(resetCoupon());
+      setCouponCode("");
+
+      // Clear/fetch cart
+      if (user) {
+        console.log("🔄 Fetching updated cart...");
+        await dispatch(fetchCartItems(user.id));
       } else {
-        toast({ title: "Failed to place order", variant: "destructive" });
+        dispatch(clearLocalCart());
       }
+
+      toast({ 
+        title: "🎉 Order Placed Successfully!",
+        description: "Thank you for your purchase",
+        className: "bg-green-50 border-green-200"
+      });
+
+      navigate("/shop/order-confirmation", {
+        state: {
+          address: billingDetails,
+          cartItems: cartItems.items,
+          totalAmount,
+          orderDetails: orderResponse.payload.data,
+        },
+      });
+    } else {
+      const errorMessage = orderResponse?.payload?.message || "Failed to place order";
+      toast({ 
+        title: errorMessage,
+        variant: "destructive" 
+      });
+    }
+  } catch (error) {
+    console.error("❌ Order placement error:", error);
+    toast({ 
+      title: "❌ Error Placing Order",
+      description: "Something went wrong. Please try again.",
+      variant: "destructive" 
     });
-  };
+  } finally {
+    setIsPlacingOrder(false);
+  }
+};
 
   const handleApplyCoupon = () => {
     if (couponCode.trim()) {
@@ -256,7 +284,7 @@ function Checkout() {
                   <InputField
                     icon={Hash}
                     name="pincode"
-                    placeholder="Pincode *"
+                    placeholder="Post Code *"
                     value={billingDetails.pincode}
                     onChange={handleInputChange}
                   />

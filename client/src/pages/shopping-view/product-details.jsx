@@ -49,6 +49,10 @@ function ProductDetails() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setQuantity(1); // Reset quantity when product changes
+    setSelectedSize(""); // Reset size selection
+    setRating(0); // Reset rating
+    setReviewMsg(""); // Reset review message
     if (id) {
       dispatch(fetchProductDetails(id));
       dispatch(getReviews(id));
@@ -165,7 +169,35 @@ function ProductDetails() {
     });
   };
 
-  const handleAddReview = () => {
+const handleAddReview = () => {
+    if (!user) {
+      dispatch(openLoginPopup());
+      toast({ 
+        title: "🔐 Sign In Required", 
+        description: "Please sign in to submit a review",
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    if (!rating) {
+      toast({ 
+        title: "⭐ Rating Required", 
+        description: "Please select a star rating before submitting",
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    if (!reviewMsg.trim()) {
+      toast({ 
+        title: "✍️ Review Message Required", 
+        description: "Please write your review before submitting",
+        variant: "destructive" 
+      });
+      return;
+    }
+
     dispatch(
       addReview({
         productId: productDetails._id,
@@ -175,12 +207,36 @@ function ProductDetails() {
         reviewValue: rating,
       })
     ).then((res) => {
-      if (res.payload.success) {
+      // Check if the action was fulfilled (success)
+      if (addReview.fulfilled.match(res)) {
         setRating(0);
         setReviewMsg("");
         dispatch(getReviews(productDetails._id));
-        toast({ title: "Review submitted" });
+        toast({ 
+          title: res?.payload?.message || "🎉 Review Submitted Successfully!",
+          description: "Thank you for sharing your feedback",
+          className: "bg-green-50 border-green-200"
+        });
+      } 
+      // Check if the action was rejected (error)
+      else if (addReview.rejected.match(res)) {
+        const errorMessage = res?.payload?.message || "❌ Failed to submit review";
+        
+        toast({ 
+          title: errorMessage,
+          description: "Please check the requirements and try again",
+          variant: "destructive",
+          duration: 5000
+        });
       }
+    }).catch((error) => {
+      console.error("Review submission error:", error);
+      toast({ 
+        title: "❌ Network Error", 
+        description: "Something went wrong. Please check your connection and try again.",
+        variant: "destructive",
+        duration: 5000
+      });
     });
   };
 
