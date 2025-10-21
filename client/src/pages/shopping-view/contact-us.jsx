@@ -274,7 +274,7 @@ const ContactUs = () => {
               Let's Connect & Collaborate
             </h2>
             <p className="text-sm sm:text-base md:text-xl text-white/90 max-w-3xl mx-auto px-4">
-              Have a question, want to collaborate, or just want to say hi? Drop us an email or give us a call. 
+              Have a question or just want to say hi? Drop us an email or give us a call. 
               <span className="font-semibold text-yellow-300"> HeadTouch is always here for you</span>. 🧢🔥
             </p>
           </motion.div>
