@@ -103,14 +103,14 @@ export const trackSearch = (searchQuery) => {
   }
 };
 
-// Track CompleteRegistration
+// Track Registration
 export const trackCompleteRegistration = () => {
   if (window.fbq) {
     window.fbq('track', 'CompleteRegistration');
   }
 };
 
-// Track Lead (for contact form submissions)
+// Track Lead 
 export const trackLead = () => {
   if (window.fbq) {
     window.fbq('track', 'Lead');
