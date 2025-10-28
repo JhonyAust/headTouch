@@ -23,7 +23,7 @@ import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
+import { trackAddToCart } from "@/components/utils/facebookPixel";
 import { openLoginPopup } from "../../store/loginRegister-slice";
 
 function createSearchParamsHelper(filterParams) {
@@ -126,6 +126,7 @@ function ShoppingListing() {
 
   function handleAddtoCart(getCurrentProductId) {
     const product = productList.find((p) => p._id === getCurrentProductId);
+    trackAddToCart(product, 1);
 
     if (!user) {
       // ✅ Guest user: add to localcart redux

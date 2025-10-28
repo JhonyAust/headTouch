@@ -10,6 +10,7 @@ import { toggleLocalWishlistItem } from "@/store/shop/wishlist-slice-local";
 import { toggleWishlistItem } from "@/store/shop/wishlist-slice";
 import HeartToggle from "./HeartToggle";
 import { categoryOptionsMap } from "@/config";
+import { trackAddToCart, trackAddToWishlist }  from "../utils/facebookPixel";
 function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart }) {
   const [quantity, setQuantity] = useState(1);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -40,6 +41,9 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
 
         if (toggleWishlistItem.fulfilled.match(resultAction)) {
           console.log("🎉 New wishlist products:", resultAction.payload.products);
+            if (!isWishlisted) {
+          trackAddToWishlist(product);
+        }
         } else {
           console.error("❌ Wishlist toggle failed:", resultAction.error);
         }
@@ -49,6 +53,9 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
     } else {
       dispatch(toggleLocalWishlistItem(product._id));
       console.log("🧪 Guest user: toggled local wishlist item");
+        if (!isWishlisted) {
+          trackAddToWishlist(product);
+        }
     }
 
     toast({
@@ -58,6 +65,7 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddtoCart
 
   const addToCartHandler = (e) => {
     e.stopPropagation();
+    trackAddToCart(product, 1);
     handleAddtoCart(product?._id, 1);
   };
 

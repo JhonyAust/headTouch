@@ -9,7 +9,7 @@ import ShoppingProductTile from "@/components/shopping-view/product-tile";
 import { useToast } from "@/components/ui/use-toast";
 import { Heart, Sparkles, ShoppingBag, ArrowRight, Stars, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import { trackAddToCart } from "@/components/utils/facebookPixel";
 function Wishlist() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ function Wishlist() {
 
   const handleAddtoCart = (productId, quantity, size) => {
     const product = productList.find((p) => p._id === productId);
-
+    trackAddToCart(product, quantity);
     if (!user) {
       dispatch(
         addItem({

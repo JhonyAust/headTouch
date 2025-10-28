@@ -10,7 +10,7 @@ import { getFeatureImages } from "@/store/common-slice";
 import { addItem } from "@/store/shop/cart-slice-local";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight, Sparkles, TrendingUp, Tag, Star, Zap, ShoppingBag, Trophy, Clock } from "lucide-react";
-
+import { trackAddToCart } from "@/components/utils/facebookPixel";
 function ShoppingHome() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { featureImageList } = useSelector((state) => state.commonFeature);
@@ -66,6 +66,7 @@ function ShoppingHome() {
       newArrivals.find((p) => p._id === getCurrentProductId) ||
       discountList.find((p) => p._id === getCurrentProductId);
 
+    trackAddToCart(product, quantity);  
     if (!user) {
       dispatch(
         addItem({

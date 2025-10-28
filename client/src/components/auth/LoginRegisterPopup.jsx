@@ -18,7 +18,7 @@ import {
 import { toggleWishlistItem, fetchWishlist } from "@/store/shop/wishlist-slice";
 import { loginWithGoogle } from "@/store/auth-slice";
 import { Sparkles, LogIn, UserPlus, X, ArrowLeft, Mail, CheckCircle } from "lucide-react";
-
+import { trackCompleteRegistration, trackEvent } from "../utils/facebookPixel";
 const initialLoginState = {
   email: "",
   password: "",
@@ -102,6 +102,9 @@ function LoginRegisterPopup() {
     if (data?.payload?.success) {
       toast({ title: data?.payload?.message });
 
+
+      trackEvent('Login', { method: 'email' });
+
       const userId = data.payload.user.id;
 
       /** 🛒 Sync local CART to DB **/
@@ -174,6 +177,7 @@ function LoginRegisterPopup() {
     dispatch(registerUser(registerData)).then((data) => {
       if (data?.payload?.success) {
         toast({ title: data?.payload?.message });
+        trackCompleteRegistration();
         dispatch(switchToLogin());
         setRegisterData(initialRegisterState);
         setShowPasswordRequirements(false);
@@ -236,7 +240,7 @@ function LoginRegisterPopup() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-[440px] p-0 overflow-hidden border-0 bg-transparent ">
+      <DialogContent className="max-w-[440px] max-h-[95vh] p-0 overflow-y-auto overflow-x-hidden border-0 bg-transparent scrollbar-hide">
         <div className="relative bg-white rounded-2xl shadow-2xl">
           {/* Animated Background Gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 opacity-60 rounded-2xl"></div>
@@ -253,10 +257,10 @@ function LoginRegisterPopup() {
             <X className="w-5 h-5" />
           </button>
 
-          <div className="relative z-10 p-8">
+          <div className="relative z-10 p-4 sm:p-6 lg:p-8">
             {/* FORGOT PASSWORD VIEW */}
             {showForgotPassword ? (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Back Button */}
                 <button
                   onClick={handleBackToLogin}
@@ -268,29 +272,29 @@ function LoginRegisterPopup() {
 
                 {/* Header */}
                 <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full mb-4">
-                    <Mail className="w-8 h-8 text-purple-600" />
+                  <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full mb-3">
+                    <Mail className="w-7 h-7 sm:w-8 sm:h-8 text-purple-600" />
                   </div>
-                  <h1 className="text-3xl font-extrabold tracking-tight mb-3 bg-gradient-to-r from-gray-900 via-purple-900 to-gray-900 bg-clip-text text-transparent">
+                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-gray-900 via-purple-900 to-gray-900 bg-clip-text text-transparent">
                     Forgot Password?
                   </h1>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-gray-600">
                     No worries! Enter your email and we'll send you a reset link.
                   </p>
                 </div>
 
                 {/* Email Sent Success View */}
                 {emailSent ? (
-                  <div className="space-y-4">
-                    <div className="bg-green-50 border-2 border-green-200 rounded-xl p-6 text-center">
-                      <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
-                      <h3 className="text-lg font-bold text-green-800 mb-2">
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 sm:p-6 text-center">
+                      <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-green-500 mx-auto mb-2 sm:mb-3" />
+                      <h3 className="text-base sm:text-lg font-bold text-green-800 mb-2">
                         Email Sent Successfully!
                       </h3>
-                      <p className="text-sm text-green-700 mb-4">
+                      <p className="text-xs sm:text-sm text-green-700 mb-3 sm:mb-4">
                         We've sent a password reset link to:
                       </p>
-                      <p className="font-semibold text-green-900 mb-4">{forgotEmail}</p>
+                      <p className="font-semibold text-green-900 mb-3 sm:mb-4 text-sm sm:text-base break-all">{forgotEmail}</p>
                       <p className="text-xs text-green-600">
                         Check your inbox and spam folder. The link expires in 1 hour.
                       </p>
@@ -298,16 +302,16 @@ function LoginRegisterPopup() {
 
                     <button
                       onClick={handleBackToLogin}
-                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 hover:scale-105"
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2.5 sm:py-3 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 hover:scale-105 text-sm sm:text-base"
                     >
                       Back to Login
                     </button>
                   </div>
                 ) : (
                   /* Forgot Password Form */
-                  <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
+                  <form onSubmit={handleForgotPasswordSubmit} className="space-y-3 sm:space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                         Email Address
                       </label>
                       <input
@@ -315,7 +319,7 @@ function LoginRegisterPopup() {
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
                         placeholder="Enter your email"
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors duration-300"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors duration-300"
                         required
                       />
                     </div>
@@ -323,16 +327,16 @@ function LoginRegisterPopup() {
                     <button
                       type="submit"
                       disabled={forgotLoading}
-                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2.5 sm:py-3 rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                       {forgotLoading ? (
                         <>
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                           Sending...
                         </>
                       ) : (
                         <>
-                          <Mail className="w-5 h-5" />
+                          <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                           Send Reset Link
                         </>
                       )}
@@ -344,23 +348,24 @@ function LoginRegisterPopup() {
               /* NORMAL LOGIN/REGISTER VIEW */
               <>
                 {/* Header with Animation */}
-                <div className="text-center mb-6">
-                  <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full">
-                    <Sparkles className="w-5 h-5 text-purple-600 animate-pulse" />
-                    <span className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <div className="text-center mb-4 sm:mb-6">
+                  <div className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full">
+                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 animate-pulse" />
+                    <span className="text-xs sm:text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                       {mode === "login" ? "Welcome Back!" : "Join HeadTouch"}
                     </span>
                   </div>
 
-                  <h1 className="text-3xl font-extrabold tracking-tight mb-3 bg-gradient-to-r from-gray-900 via-purple-900 to-gray-900 bg-clip-text text-transparent">
+                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-gray-900 via-purple-900 to-gray-900 bg-clip-text text-transparent">
                     {mode === "login" ? "Sign In" : "Create Account"}
                   </h1>
 
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-gray-600">
                     {mode === "login" ? (
                       <>
                         New to HeadTouch?{" "}
                         <button
+                          type="button"
                           onClick={() => dispatch(switchToRegister())}
                           className="font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hover:from-purple-700 hover:to-pink-700 transition-all duration-300"
                         >
@@ -371,6 +376,7 @@ function LoginRegisterPopup() {
                       <>
                         Already have an account?{" "}
                         <button
+                          type="button"
                           onClick={() => dispatch(switchToLogin())}
                           className="font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hover:from-purple-700 hover:to-pink-700 transition-all duration-300"
                         >
@@ -382,9 +388,9 @@ function LoginRegisterPopup() {
                 </div>
 
                 {/* Form Container */}
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {mode === "login" ? (
-                    <div className="space-y-4 login-form-wrapper">
+                    <div className="space-y-3 sm:space-y-4 login-form-wrapper">
                       <CommonForm
                         formControls={loginFormControls}
                         buttonText={
@@ -396,7 +402,7 @@ function LoginRegisterPopup() {
                               </>
                             ) : (
                               <>
-                                <LogIn className="w-5 h-5" />
+                                <LogIn className="w-4 h-4 sm:w-5 sm:h-5" />
                                 Sign In
                               </>
                             )}
@@ -408,30 +414,30 @@ function LoginRegisterPopup() {
                       />
 
                       {/* Forgot Password Button */}
-                      <div className="text-right -mt-2">
+                      <div className="text-right -mt-1">
                         <button
                           type="button"
                           onClick={() => setShowForgotPassword(true)}
-                          className="text-sm text-gray-500 hover:text-purple-600 font-medium transition-colors duration-300"
+                          className="text-xs sm:text-sm text-gray-500 hover:text-purple-600 font-medium transition-colors duration-300"
                         >
                           Forgot Password?
                         </button>
                       </div>
 
                       {/* Divider */}
-                      <div className="relative my-6">
+                      <div className="relative my-4 sm:my-6">
                         <div className="absolute inset-0 flex items-center">
                           <div className="w-full border-t border-gray-300"></div>
                         </div>
-                        <div className="relative flex justify-center text-sm">
-                          <span className="px-4 bg-white rounded-lg text-gray-500 font-medium">
+                        <div className="relative flex justify-center text-xs sm:text-sm">
+                          <span className="px-3 sm:px-4 bg-white rounded-lg text-gray-500 font-medium">
                             Or continue with
                           </span>
                         </div>
                       </div>
 
                       {/* Google Login Button */}
-                      <button
+                       <button
                         onClick={handleGoogleLogin}
                         disabled={isLoading}
                         className="group relative w-full bg-white border-2 border-gray-200 hover:border-red-300 text-gray-700 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
@@ -461,7 +467,7 @@ function LoginRegisterPopup() {
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-4 register-form-wrapper">
+                    <div className="space-y-3 sm:space-y-4 register-form-wrapper">
                       <CommonForm
                         formControls={registerFormControls}
                         buttonText={
@@ -473,7 +479,7 @@ function LoginRegisterPopup() {
                               </>
                             ) : (
                               <>
-                                <UserPlus className="w-5 h-5" />
+                                <UserPlus className="w-4 h-4 sm:w-5 sm:h-5" />
                                 Create Account
                               </>
                             )}
@@ -494,8 +500,8 @@ function LoginRegisterPopup() {
 
                       {/* Password Requirements Indicator */}
                       {showPasswordRequirements && registerData.password && (
-                        <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 space-y-2">
-                          <p className="text-sm font-semibold text-gray-700 mb-2">
+                        <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-3 sm:p-4 space-y-1.5 sm:space-y-2">
+                          <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                             Password Requirements:
                           </p>
                           {(() => {
@@ -504,9 +510,9 @@ function LoginRegisterPopup() {
                               <div className="space-y-1">
                                 <div className="flex items-center gap-2">
                                   {requirements.minLength ? (
-                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                    <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
                                   ) : (
-                                    <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                                    <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-gray-300 flex-shrink-0"></div>
                                   )}
                                   <span className={`text-xs ${requirements.minLength ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
                                     At least 8 characters
@@ -514,9 +520,9 @@ function LoginRegisterPopup() {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   {requirements.hasUpperCase ? (
-                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                    <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
                                   ) : (
-                                    <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                                    <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-gray-300 flex-shrink-0"></div>
                                   )}
                                   <span className={`text-xs ${requirements.hasUpperCase ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
                                     One uppercase letter
@@ -524,9 +530,9 @@ function LoginRegisterPopup() {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   {requirements.hasNumber ? (
-                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                    <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
                                   ) : (
-                                    <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                                    <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-gray-300 flex-shrink-0"></div>
                                   )}
                                   <span className={`text-xs ${requirements.hasNumber ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
                                     At least one digit
@@ -534,9 +540,9 @@ function LoginRegisterPopup() {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   {requirements.hasSpecialChar ? (
-                                    <CheckCircle className="w-4 h-4 text-green-500" />
+                                    <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
                                   ) : (
-                                    <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                                    <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-gray-300 flex-shrink-0"></div>
                                   )}
                                   <span className={`text-xs ${requirements.hasSpecialChar ? 'text-green-600 font-medium' : 'text-gray-600'}`}>
                                     One special character (!@#$%^&*...)
@@ -550,7 +556,7 @@ function LoginRegisterPopup() {
 
                       {/* Password Error Message */}
                       {passwordError && (
-                        <div className="bg-red-50 border-2 border-red-200 rounded-xl p-3 text-sm text-red-700">
+                        <div className="bg-red-50 border-2 border-red-200 rounded-xl p-2.5 sm:p-3 text-xs sm:text-sm text-red-700">
                           {passwordError}
                         </div>
                       )}
@@ -559,7 +565,7 @@ function LoginRegisterPopup() {
                 </div>
 
                 {/* Footer Note */}
-                <p className="mt-6 text-center text-xs text-gray-500">
+                <p className="mt-4 sm:mt-6 text-center text-xs text-gray-500">
                   By continuing, you agree to HeadTouch's{" "}
                   <a href="/shop/terms" className="text-purple-600 hover:underline">
                     Terms & Conditions
@@ -571,6 +577,17 @@ function LoginRegisterPopup() {
         </div>
 
         <style jsx>{`
+          /* Hide scrollbar for Chrome, Safari and Opera */
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+
+          /* Hide scrollbar for IE, Edge and Firefox */
+          .scrollbar-hide {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+          }
+
           @keyframes blob {
             0%, 100% {
               transform: translate(0px, 0px) scale(1);
@@ -591,12 +608,13 @@ function LoginRegisterPopup() {
             animation-delay: 2s;
           }
 
-          .login-form-wrapper button[type="submit"] {
+          .login-form-wrapper button[type="submit"],
+          .login-form-wrapper button[type="button"]:not(.text-xs):not(.text-sm) {
             width: 100%;
-            padding: 0.75rem 1rem;
+            padding: 0.625rem 1rem;
             border-radius: 0.75rem;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.875rem;
             background: linear-gradient(110deg, #9333ea 0%, #ec4899 50%, #9333ea 100%);
             background-size: 200% 100%;
             color: white;
@@ -604,23 +622,34 @@ function LoginRegisterPopup() {
             transition: all 0.5s ease;
           }
 
-          .login-form-wrapper button[type="submit"]:hover {
+          @media (min-width: 640px) {
+            .login-form-wrapper button[type="submit"],
+            .login-form-wrapper button[type="button"]:not(.text-xs):not(.text-sm) {
+              padding: 0.75rem 1rem;
+              font-size: 1rem;
+            }
+          }
+
+          .login-form-wrapper button[type="submit"]:hover,
+          .login-form-wrapper button[type="button"]:not(.text-xs):not(.text-sm):hover {
             background-position: 100% 0;
             transform: scale(1.02);
             box-shadow: 0 20px 25px -5px rgba(147, 51, 234, 0.4);
           }
 
-          .login-form-wrapper button[type="submit"]:disabled {
+          .login-form-wrapper button[type="submit"]:disabled,
+          .login-form-wrapper button[type="button"]:not(.text-xs):not(.text-sm):disabled {
             opacity: 0.5;
             cursor: not-allowed;
           }
 
-          .register-form-wrapper button[type="submit"] {
+          .register-form-wrapper button[type="submit"],
+          .register-form-wrapper button[type="button"]:not(.text-xs):not(.text-sm) {
             width: 100%;
-            padding: 0.75rem 1rem;
+            padding: 0.625rem 1rem;
             border-radius: 0.75rem;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.875rem;
             background: linear-gradient(110deg, #2563eb 0%, #9333ea 50%, #ec4899 100%);
             background-size: 200% 100%;
             color: white;
@@ -628,13 +657,23 @@ function LoginRegisterPopup() {
             transition: all 0.5s ease;
           }
 
-          .register-form-wrapper button[type="submit"]:hover {
+          @media (min-width: 640px) {
+            .register-form-wrapper button[type="submit"],
+            .register-form-wrapper button[type="button"]:not(.text-xs):not(.text-sm) {
+              padding: 0.75rem 1rem;
+              font-size: 1rem;
+            }
+          }
+
+          .register-form-wrapper button[type="submit"]:hover,
+          .register-form-wrapper button[type="button"]:not(.text-xs):not(.text-sm):hover {
             background-position: 100% 0;
             transform: scale(1.02);
             box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4);
           }
 
-          .register-form-wrapper button[type="submit"]:disabled {
+          .register-form-wrapper button[type="submit"]:disabled,
+          .register-form-wrapper button[type="button"]:not(.text-xs):not(.text-sm):disabled {
             opacity: 0.5;
             cursor: not-allowed;
           }

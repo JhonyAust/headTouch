@@ -18,7 +18,7 @@ import { openLoginPopup } from "../../store/loginRegister-slice";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { shoppingViewHeaderMenuItems } from "@/config";
 import { Button } from "../ui/button";
-
+import { trackSearch } from "../utils/facebookPixel";
 function Header() {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -53,6 +53,7 @@ const handleLogout = () => {
 
   const handleSearch = () => {
     if (searchKeyword.trim()) {
+      trackSearch(searchKeyword.trim());
       navigate(`/shop/search?keyword=${encodeURIComponent(searchKeyword.trim())}`);
       setMobileSearchOpen(false);
     }

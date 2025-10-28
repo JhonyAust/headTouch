@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CheckCircle2, MapPin, Phone, Package, CreditCard, Sparkles, ArrowRight, FileText, Building2, Hash } from "lucide-react";
+import { trackPurchase } from "@/components/utils/facebookPixel";
 
 function OrderConfirmation() {
   const location = useLocation();
@@ -8,6 +9,16 @@ function OrderConfirmation() {
   const [isVisible, setIsVisible] = useState(false);
 
   const { address, cartItems, totalAmount } = location.state || {};
+
+  // Track Facebook Pixel Purchase Event
+  useEffect(() => {
+    if (cartItems && totalAmount) {
+      trackPurchase({
+        totalAmount: totalAmount,
+        items: cartItems
+      });
+    }
+  }, [cartItems, totalAmount]);
 
   useEffect(() => {
     if (!address || !cartItems || !totalAmount) {

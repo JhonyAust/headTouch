@@ -28,7 +28,7 @@ import {  categoryOptionsMap } from "@/config";
 import { openLoginPopup } from "@/store/loginRegister-slice";
 
 import ProductThumbnails from "@/components/shopping-view/ProductThumbnails";
-
+import { trackAddToCart, trackViewContent, trackAddToWishlist } from "@/components/utils/facebookPixel";
 function ProductDetails() {
   const { slug } = useParams();
   const id = slug?.split("-").pop();
@@ -59,6 +59,11 @@ function ProductDetails() {
     }
   }, [dispatch, id]);
 
+useEffect(() => {
+  if (productDetails) {
+    trackViewContent(productDetails);
+  }
+}, [productDetails]);
   useEffect(() => {
     if (productDetails?.category) {
       dispatch(
@@ -81,7 +86,7 @@ function ProductDetails() {
 
   function handleAddtoCart(productId) {
     if (!productId) return toast({ title: "Invalid product ID", variant: "destructive" });
-
+    trackAddToCart(productDetails, quantity); 
     const payload = { productId, size: selectedSize, quantity };
     if (user) {
       dispatch(addToCart({ userId: user.id, ...payload })).then((res) => {
@@ -153,6 +158,9 @@ function ProductDetails() {
 
         if (toggleWishlistItem.fulfilled.match(resultAction)) {
           console.log("🎉 Wishlist updated:", resultAction.payload.products);
+           if (!isWishlisted) {
+          trackAddToWishlist(productDetails);
+        }
         } else {
           console.error("❌ Wishlist toggle failed:", resultAction.error);
         }
@@ -162,6 +170,9 @@ function ProductDetails() {
     } else {
       dispatch(toggleLocalWishlistItem(productDetails._id));
       console.log("🧪 Guest: toggled wishlist item");
+       if (!isWishlisted) {
+          trackAddToWishlist(productDetails);
+        }
     }
 
     toast({

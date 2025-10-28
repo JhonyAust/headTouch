@@ -1,4 +1,4 @@
-import { Route, Routes ,useLocation} from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import AuthLayout from "./components/auth/layout";
 import AuthLogin from "./pages/auth/login";
 import AuthRegister from "./pages/auth/register";
@@ -6,7 +6,6 @@ import AdminLayout from "./components/admin-view/layout";
 import AdminProducts from "./pages/admin-view/products";
 import AdminOrders from "./pages/admin-view/orders";
 import AdminUsers from "./pages/admin-view/users";
-
 import AdminFeatures from "./pages/admin-view/features";
 import ShoppingLayout from "./components/shopping-view/layout";
 import NotFound from "./pages/not-found";
@@ -41,6 +40,7 @@ import ContactUs from "./pages/shopping-view/contact-us";
 import AdminCouponsView from "./pages/admin-view/admin-coupon-view";
 import TermsAndConditions from "./pages/shopping-view/terms";
 import ResetPassword from "./pages/auth/RestPassword";
+import { trackPageView } from "./components/utils/facebookPixel";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -48,23 +48,28 @@ function App() {
   );
   const dispatch = useDispatch();
   
-  const route = useLocation();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Track Facebook Pixel page views on route change
+  useEffect(() => {
+    trackPageView();
+  }, [location]);
+
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
-  const navigate = useNavigate();
-  const location = useLocation();
-useEffect(() => {
-  const userId = user?._id || user?.id;
 
-  if (userId) {
-    console.log("📦 Dispatching fetchCartItems with userId:", userId);
-    dispatch(fetchCartItems(userId));
-  } else {
-    console.log("⚠️ No user ID yet. Skipping fetchCartItems.");
-  }
-}, [user, dispatch]);
+  useEffect(() => {
+    const userId = user?._id || user?.id;
 
+    if (userId) {
+      console.log("📦 Dispatching fetchCartItems with userId:", userId);
+      dispatch(fetchCartItems(userId));
+    } else {
+      console.log("⚠️ No user ID yet. Skipping fetchCartItems.");
+    }
+  }, [user, dispatch]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -73,8 +78,6 @@ useEffect(() => {
       }
     }
   }, [isAuthenticated, user, navigate, location.pathname]);
-
-  // if (isLoading) return <LoadingScreen />; 
 
   console.log(isLoading, user);
 
@@ -88,7 +91,6 @@ useEffect(() => {
           element={<Navigate to="/shop/home" replace />}
         />
 
-        
         <Route
           path="/admin"
           element={
@@ -106,7 +108,8 @@ useEffect(() => {
           <Route path="features" element={<AdminFeatures />} />
           <Route path="orders/:orderId" element={<AdminOrderDetailsPage />} />
         </Route>
-      {/* ✅ Shopping routes (public + protected) */}
+
+        {/* Shopping routes (public + protected) */}
         <Route path="/shop" element={<ShoppingLayout />}>
           <Route path="home" element={<ShoppingHome />} />
           <Route path="listing" element={<ShoppingListing />} />
@@ -116,26 +119,16 @@ useEffect(() => {
           <Route path="terms" element={<TermsAndConditions />} />
           <Route path="about" element={<AboutUs />} />
           <Route path="contact" element={<ContactUs />} />
-          
 
-
-          {/* ✅ Protected routes wrapped with CheckAuth */}
-          <Route path="checkout" element={
-            
-              <ShoppingCheckout />
-           
-          } />
+          {/* Protected routes wrapped with CheckAuth */}
+          <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="account" element={
             <CheckAuth isAuthenticated={isAuthenticated}>
               <ShoppingAccount />
             </CheckAuth>
           } />
 
-          <Route path="order-confirmation" element={
-            
-              <OrderConfirmation/>
-            
-          } />
+          <Route path="order-confirmation" element={<OrderConfirmation />} />
           <Route path="payment-success" element={
             <CheckAuth isAuthenticated={isAuthenticated}>
               <PaymentSuccessPage />
@@ -145,7 +138,7 @@ useEffect(() => {
         <Route path="/unauth-page" element={<UnauthPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {route.pathname?.startsWith("/shop") && (
+      {location.pathname?.startsWith("/shop") && (
         <>
           <div className="mt-[150px]">
             <MyFooter />
@@ -154,7 +147,6 @@ useEffect(() => {
         </>
       )}
       <LoginRegisterPopup />
-
     </div>
   );
 }

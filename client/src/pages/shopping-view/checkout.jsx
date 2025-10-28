@@ -26,6 +26,8 @@ import {
   Sparkles
 } from "lucide-react";
 
+import { trackInitiateCheckout } from "@/components/utils/facebookPixel";
+
 function Checkout() {
   const dispatch = useDispatch();
   const { addressList } = useSelector((state) => state.shopAddress);
@@ -82,6 +84,12 @@ function Checkout() {
       });
     }
   }, [dispatch, user]);
+
+  useEffect(() => {
+  if (cartItems && cartItems.length > 0 && totalAmount) {
+    trackInitiateCheckout(cartItems, totalAmount);
+  }
+}, []);
 
   const handleInputChange = (e) => {
     setBillingDetails({ ...billingDetails, [e.target.name]: e.target.value });
