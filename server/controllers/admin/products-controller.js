@@ -10,10 +10,7 @@ const handleImageUpload = async(req, res) => {
 
         res.json({
             success: true,
-            result: {
-                url: result.secure_url,        
-                public_id: result.public_id,  
-            },
+            result,
         });
     } catch (error) {
         console.error(error);
