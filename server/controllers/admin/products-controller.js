@@ -1,7 +1,6 @@
 const { imageUploadUtil } = require("../../helpers/cloudinary");
 const Product = require("../../models/Product");
 
-// Upload single image handler (for each image)
 const handleImageUpload = async(req, res) => {
     try {
         const b64 = Buffer.from(req.file.buffer).toString("base64");
@@ -10,7 +9,10 @@ const handleImageUpload = async(req, res) => {
 
         res.json({
             success: true,
-            result,
+            result: {
+                url: result.secure_url,        // Use secure_url instead of url
+                public_id: result.public_id,   // Keep public_id for deletion
+            },
         });
     } catch (error) {
         console.error(error);

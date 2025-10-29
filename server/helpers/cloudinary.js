@@ -13,6 +13,7 @@ const storage = new multer.memoryStorage();
 async function imageUploadUtil(file) {
     const result = await cloudinary.uploader.upload(file, {
         resource_type: "auto",
+        secure: true, // Force HTTPS
     });
 
     return result;

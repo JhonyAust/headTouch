@@ -59,9 +59,9 @@ function ProductImageUpload({
         data
       );
 
-      if (response?.data?.success) {
-        setUploadedImageUrls((prev) => [...prev, response.data.result.url]);
-      }
+     if (response?.data?.success) {
+  setUploadedImageUrls((prev) => [...prev, response.data.result.secure_url]); 
+}
     } catch (error) {
       console.error("Upload error:", error);
     } finally {

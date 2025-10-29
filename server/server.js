@@ -61,7 +61,51 @@ mongoose.connect(process.env.MONGO)
     .then(() => console.log("✅ MongoDB connected"))
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ⭐ CRITICAL: Enhanced CORS for Messenger/Facebook
+
+// ⭐ TEMPORARY FIX: Force all Cloudinary URLs to HTTPS
+app.use((req, res, next) => {
+    const originalJson = res.json;
+    
+    res.json = function(data) {
+        // Recursively convert all HTTP Cloudinary URLs to HTTPS
+        const convertToHttps = (obj) => {
+            if (!obj) return obj;
+            
+            if (typeof obj === 'string') {
+                // Convert Cloudinary HTTP URLs to HTTPS
+                if (obj.includes('res.cloudinary.com') && obj.startsWith('http://')) {
+                    return obj.replace('http://', 'https://');
+                }
+                return obj;
+            }
+            
+            if (Array.isArray(obj)) {
+                return obj.map(item => convertToHttps(item));
+            }
+            
+            if (typeof obj === 'object') {
+                const converted = {};
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        converted[key] = convertToHttps(obj[key]);
+                    }
+                }
+                return converted;
+            }
+            
+            return obj;
+        };
+        
+        const convertedData = convertToHttps(data);
+        originalJson.call(this, convertedData);
+    };
+    
+    next();
+});
+
+
+
+    // ⭐ CRITICAL: Enhanced CORS for Messenger/Facebook
 app.use(
     cors({
         origin: function(origin, callback) {
