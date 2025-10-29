@@ -188,18 +188,75 @@ function LoginRegisterPopup() {
     });
   };
 
-  const handleGoogleLogin = async () => {
-    setIsLoading(true);
-    const result = await dispatch(loginWithGoogle());
+const handleGoogleLogin = async () => {
+  setIsLoading(true);
+  const result = await dispatch(loginWithGoogle());
 
-    if (result?.payload?.success) {
-      toast({ title: result.payload.message });
-      dispatch(closePopup());
-    } else {
-      toast({ title: result?.payload?.message || result?.error, variant: "destructive" });
+  if (result?.payload?.success) {
+    toast({ title: result.payload.message });
+    
+    trackEvent('Login', { method: 'google' });
+
+    const userId = result.payload.user.id;
+
+    /** 🛒 Sync local CART to DB **/
+    const guestCartItems = getLocalCartItemsHelper();
+
+    if (guestCartItems.length > 0) {
+      await Promise.all(
+        guestCartItems.map((item) =>
+          dispatch(
+            addToCart({
+              userId,
+              productId: item.productId,
+              quantity: item.quantity,
+            })
+          )
+        )
+      );
+      clearLocalCartHelper();
+      dispatch(fetchCartItems(userId));
     }
-    setIsLoading(false);
-  };
+
+    /** ❤️ Sync local WISHLIST to DB **/
+    const guestWishlist = getLocalWishlistItemsHelper();
+
+    const wishlistResult = await dispatch(fetchWishlist(userId));
+    const dbWishlistItems = wishlistResult?.payload?.products || [];
+
+    const dbProductIds = dbWishlistItems.map((item) => item._id);
+
+    const wishlistToAdd = guestWishlist.filter(
+      (productId) => !dbProductIds.includes(productId)
+    );
+
+    if (wishlistToAdd.length > 0) {
+      await Promise.all(
+        wishlistToAdd.map((productId) =>
+          dispatch(toggleWishlistItem({ userId, productId }))
+        )
+      );
+    }
+
+    clearLocalWishlistHelper();
+    dispatch(fetchWishlist(userId));
+
+    dispatch(closePopup());
+  } else {
+    // Fix: Properly extract error message from the result
+    const errorMessage = 
+      result?.payload?.message || 
+      result?.payload || 
+      (typeof result?.error === 'string' ? result.error : result?.error?.message) || 
+      "Failed to login with Google";
+    
+    toast({ 
+      title: errorMessage, 
+      variant: "destructive" 
+    });
+  }
+  setIsLoading(false);
+};
 
   // Handle Forgot Password Submit
   const handleForgotPasswordSubmit = async (e) => {

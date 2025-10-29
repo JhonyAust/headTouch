@@ -84,8 +84,20 @@ export const loginWithGoogle = createAsyncThunk(
             console.log("Backend response:", response.data);
             return response.data;
         } catch (err) {
-            console.error("Google login error:", err); 
-            return thunkAPI.rejectWithValue(err.message);
+            console.error("Google login error:", err);
+            
+            // Return a user-friendly error message
+            let errorMessage = "Failed to login with Google";
+            
+            if (err.code === "auth/popup-closed-by-user") {
+                errorMessage = "Login cancelled";
+            } else if (err.code === "auth/popup-blocked") {
+                errorMessage = "Popup was blocked. Please allow popups and try again";
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+            
+            return thunkAPI.rejectWithValue(errorMessage);
         }
     }
 );
