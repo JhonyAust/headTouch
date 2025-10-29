@@ -12,6 +12,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { SearchX, Sparkles, ArrowRight } from "lucide-react";
 
+// ⭐ Helper function to convert HTTP Cloudinary URLs to HTTPS
+const convertProductImagesToHttps = (products) => {
+  if (!products || !Array.isArray(products)) return products;
+  
+  return products.map(product => {
+    if (!product) return product;
+    
+    const converted = { ...product };
+    
+    // Convert images array
+    if (converted.images && Array.isArray(converted.images)) {
+      converted.images = converted.images.map(img => 
+        typeof img === 'string' && img.startsWith('http://') 
+          ? img.replace('http://', 'https://') 
+          : img
+      );
+    }
+    
+    return converted;
+  });
+};
+
 function SearchProducts() {
   const [keyword, setKeyword] = useState("");
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
@@ -24,6 +46,9 @@ function SearchProducts() {
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
   const { toast } = useToast();
+
+  // ⭐ Convert search results to HTTPS
+  const secureSearchResults = convertProductImagesToHttps(searchResults);
 
   useEffect(() => {
     const keywordFromUrl = searchParams.get("keyword") || "";
@@ -104,14 +129,14 @@ function SearchProducts() {
               </span>
             </h1>
           )}
-          {searchResults.length > 0 && (
+          {secureSearchResults.length > 0 && (
             <p className="text-slate-600 mt-2">
-              Found {searchResults.length} product{searchResults.length !== 1 ? "s" : ""}
+              Found {secureSearchResults.length} product{secureSearchResults.length !== 1 ? "s" : ""}
             </p>
           )}
         </div>
 
-        {!searchResults.length ? (
+        {!secureSearchResults.length ? (
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center max-w-2xl px-4">
               {/* Animated Icon Container */}
@@ -150,13 +175,11 @@ function SearchProducts() {
                   Go to Homepage
                 </button>
               </div>
-
-              
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {searchResults.map((item, index) => (
+            {secureSearchResults.map((item, index) => (
               <div
                 key={item._id}
                 className="animate-fade-in"

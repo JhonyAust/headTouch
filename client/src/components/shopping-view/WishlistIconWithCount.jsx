@@ -1,5 +1,3 @@
-// src/components/shopping-view/WishlistIconWithCount.jsx
-
 import { Heart } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -26,14 +24,12 @@ function WishlistIconWithCount({ iconOnly = false }) {
       {/* Icon */}
       <Heart className="w-6 h-6 text-current" />
 
-      {/* Count badge */}
-      {wishlistCount > -1 && (
-        <span className="absolute -top-1 -right-2 text-[10px] bg-red-500 text-white rounded-full px-1.5">
+      {/* Count badge - only show when count is greater than 0 */}
+      {wishlistCount > 0 && (
+        <span className="absolute -top-1 -right-2 text-[10px] bg-red-500 text-white rounded-full px-1.5 min-w-[18px] text-center">
           {wishlistCount}
         </span>
       )}
-
-     
     </button>
   );
 }
