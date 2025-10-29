@@ -1,9 +1,33 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "@/components/api/axiosInstance";
+
 const initialState = {
   isLoading: false,
   productList: [],
   productDetails: null,
+};
+
+// ⭐ Helper function to convert HTTP Cloudinary URLs to HTTPS
+const convertImagesToHttps = (product) => {
+  if (!product) return product;
+  
+  const converted = { ...product };
+  
+  // Convert images array
+  if (converted.images && Array.isArray(converted.images)) {
+    converted.images = converted.images.map(img => 
+      typeof img === 'string' && img.startsWith('http://') 
+        ? img.replace('http://', 'https://') 
+        : img
+    );
+  }
+  
+  // Convert single image field if exists
+  if (converted.image && typeof converted.image === 'string' && converted.image.startsWith('http://')) {
+    converted.image = converted.image.replace('http://', 'https://');
+  }
+  
+  return converted;
 };
 
 export const fetchAllFilteredProducts = createAsyncThunk(
@@ -52,7 +76,8 @@ const shoppingProductSlice = createSlice({
       })
       .addCase(fetchAllFilteredProducts.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.productList = action.payload.data;
+        // ⭐ Convert all product images to HTTPS
+        state.productList = action.payload.data?.map(convertImagesToHttps) || [];
       })
       .addCase(fetchAllFilteredProducts.rejected, (state, action) => {
         state.isLoading = false;
@@ -63,7 +88,8 @@ const shoppingProductSlice = createSlice({
       })
       .addCase(fetchProductDetails.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.productDetails = action.payload.data;
+        // ⭐ Convert product detail images to HTTPS
+        state.productDetails = convertImagesToHttps(action.payload.data);
       })
       .addCase(fetchProductDetails.rejected, (state, action) => {
         state.isLoading = false;

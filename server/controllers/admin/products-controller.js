@@ -10,7 +10,7 @@ const handleImageUpload = async(req, res) => {
         res.json({
             success: true,
             result: {
-                url: result.secure_url,        // Use secure_url instead of url
+                url: result.secure_url || result.url.replace('http://', 'https://'),       // Use secure_url instead of url
                 public_id: result.public_id,   // Keep public_id for deletion
             },
         });
