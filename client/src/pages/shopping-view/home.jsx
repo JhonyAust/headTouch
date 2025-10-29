@@ -11,6 +11,28 @@ import { addItem } from "@/store/shop/cart-slice-local";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight, Sparkles, TrendingUp, Tag, Star, Zap, ShoppingBag, Trophy, Clock } from "lucide-react";
 import { trackAddToCart } from "@/components/utils/facebookPixel";
+// ⭐ Helper function to convert HTTP Cloudinary URLs to HTTPS
+const convertProductImagesToHttps = (products) => {
+  if (!products || !Array.isArray(products)) return products;
+  
+  return products.map(product => {
+    if (!product) return product;
+    
+    const converted = { ...product };
+    
+    // Convert images array
+    if (converted.images && Array.isArray(converted.images)) {
+      converted.images = converted.images.map(img => 
+        typeof img === 'string' && img.startsWith('http://') 
+          ? img.replace('http://', 'https://') 
+          : img
+      );
+    }
+    
+    return converted;
+  });
+};
+
 function ShoppingHome() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { featureImageList } = useSelector((state) => state.commonFeature);
@@ -34,7 +56,8 @@ function ShoppingHome() {
     dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "bestseller" }))
       .then((res) => {
         if (res?.payload?.data) {
-          setBestSellerList(res.payload.data.slice(0, 10));
+          // ⭐ Convert to HTTPS before setting state
+          setBestSellerList(convertProductImagesToHttps(res.payload.data.slice(0, 10)));
         }
       });
 
@@ -42,7 +65,8 @@ function ShoppingHome() {
     dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "newarrival" }))
       .then((res) => {
         if (res?.payload?.data) {
-          setNewArrivals(res.payload.data.slice(0, 10));
+          // ⭐ Convert to HTTPS before setting state
+          setNewArrivals(convertProductImagesToHttps(res.payload.data.slice(0, 10)));
         }
       });
 
@@ -50,8 +74,10 @@ function ShoppingHome() {
     dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "newest" }))
       .then((res) => {
         if (res?.payload?.data) {
-          setAllProducts(res.payload.data);
-          const discount = res.payload.data.filter((item) => item?.salePrice > 0);
+          // ⭐ Convert to HTTPS before setting state
+          const convertedProducts = convertProductImagesToHttps(res.payload.data);
+          setAllProducts(convertedProducts);
+          const discount = convertedProducts.filter((item) => item?.salePrice > 0);
           setDiscountList(discount.slice(0, 10));
         }
       });
@@ -112,7 +138,6 @@ function ShoppingHome() {
     }, 4000);
     return () => clearInterval(timer);
   }, [featureImageList]);
-
   return (
     <div className="flex flex-col min-h-screen mt-14 md:mt-0 bg-gradient-to-br from-slate-50 via-white to-purple-50/30">
       {/* Enhanced Banner with Parallax Effect */}
