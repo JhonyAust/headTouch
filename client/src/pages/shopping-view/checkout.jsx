@@ -52,7 +52,7 @@ function Checkout() {
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [shippingType, setShippingType] = useState("inside");
   const [couponCode, setCouponCode] = useState("");
-  const shippingCharge = shippingType === "inside" ? 80 : 150;
+  const shippingCharge = shippingType === "inside" ? 80 : 120;
 
   const totalCartAmount =
     cartItems && cartItems.items && cartItems.items.length > 0
@@ -347,7 +347,7 @@ const handlePlaceOrder = async () => {
                 <ShippingOption
                   id="outside"
                   label="Outside Dhaka"
-                  price="৳ 150"
+                  price="৳ 120"
                   description="Delivery in 3-5 business days"
                   checked={shippingType === "outside"}
                   onChange={() => setShippingType("outside")}

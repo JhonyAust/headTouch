@@ -340,7 +340,7 @@ const ProductDetailsTabs = ({
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <ShippingCard label="Inside Dhaka" value="৳ 80" icon="🏙️" />
-                <ShippingCard label="Outside Dhaka" value="৳ 150" icon="🚚" />
+                <ShippingCard label="Outside Dhaka" value="৳ 120" icon="🚚" />
                 <ShippingCard label="Delivery Time" value="2–4 business days" icon="⚡" />
               </div>
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
